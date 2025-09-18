@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import Florb, { FlorbData } from './components/Florb';
 import FlorbUnboxing from './components/FlorbUnboxing';
+import FlorbInventory from './components/FlorbInventory';
+import WorldMap from './components/WorldMap';
+import './FlorbDemo.css';
 
 // Sample Florb data based on your DB example
 const sampleFlorbData: FlorbData = {
@@ -50,29 +53,36 @@ const foilFlorbData: FlorbData = {
 };
 
 function FlorbDemo() {
-  const [showUnboxing, setShowUnboxing] = useState(false);
+  const [currentView, setCurrentView] = useState<'demo' | 'unboxing' | 'inventory' | 'worldmap'>('demo');
 
   const handleFlorbClick = (florbData: FlorbData) => {
     console.log('Florb clicked:', florbData.name);
   };
 
-  if (showUnboxing) {
+  if (currentView === 'inventory') {
     return (
-      <div>
+      <div className="demo-container">
         <button 
-          onClick={() => setShowUnboxing(false)}
-          style={{
-            position: 'absolute',
-            top: '20px',
-            left: '20px',
-            background: 'rgba(255, 255, 255, 0.1)',
-            border: '1px solid rgba(255, 255, 255, 0.3)',
-            color: 'white',
-            padding: '0.5rem 1rem',
-            borderRadius: '20px',
-            cursor: 'pointer',
-            zIndex: 1000,
-          }}
+          onClick={() => setCurrentView('demo')}
+          className="back-button"
+        >
+          ← Back to Demo
+        </button>
+        <FlorbInventory />
+      </div>
+    );
+  }
+
+  if (currentView === 'worldmap') {
+    return <WorldMap onBack={() => setCurrentView('demo')} />;
+  }
+
+  if (currentView === 'unboxing') {
+    return (
+      <div className="demo-container">
+        <button 
+          onClick={() => setCurrentView('demo')}
+          className="back-button"
         >
           ← Back to Demo
         </button>
@@ -82,28 +92,14 @@ function FlorbDemo() {
   }
 
   return (
-    <div style={{ 
-      padding: '2rem',
-      backgroundColor: '#1a1a1a',
-      minHeight: '100vh',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      gap: '2rem'
-    }}>
-      <h1 style={{ color: 'white', textAlign: 'center' }}>
+    <div className="demo-container">
+      <h1 className="demo-title">
         Florb Component Demo
       </h1>
       
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-        gap: '2rem',
-        maxWidth: '1200px',
-        width: '100%'
-      }}>
-        <div style={{ textAlign: 'center' }}>
-          <h3 style={{ color: 'white', marginBottom: '1rem' }}>Grey Florb (Basic)</h3>
+      <div className="florb-grid">
+        <div className="florb-showcase">
+          <h3 className="florb-showcase-title">Grey Florb (Basic)</h3>
           <Florb
             florbData={sampleFlorbData}
             size={200}
@@ -111,8 +107,8 @@ function FlorbDemo() {
           />
         </div>
         
-        <div style={{ textAlign: 'center' }}>
-          <h3 style={{ color: 'white', marginBottom: '1rem' }}>Legendary Holo Florb</h3>
+        <div className="florb-showcase">
+          <h3 className="florb-showcase-title">Legendary Holo Florb</h3>
           <Florb
             florbData={holoFlorbData}
             size={200}
@@ -120,8 +116,8 @@ function FlorbDemo() {
           />
         </div>
         
-        <div style={{ textAlign: 'center' }}>
-          <h3 style={{ color: 'white', marginBottom: '1rem' }}>Epic Foil Florb</h3>
+        <div className="florb-showcase">
+          <h3 className="florb-showcase-title">Epic Foil Florb</h3>
           <Florb
             florbData={foilFlorbData}
             size={200}
@@ -130,14 +126,9 @@ function FlorbDemo() {
         </div>
       </div>
       
-      <div style={{ 
-        color: 'white', 
-        textAlign: 'center',
-        maxWidth: '800px',
-        lineHeight: 1.6
-      }}>
+      <div className="demo-info">
         <h2>Features:</h2>
-        <ul style={{ textAlign: 'left' }}>
+        <ul className="features-list">
           <li>Mouse tilt effect that follows cursor position</li>
           <li>Grayscale base images with customizable gradients</li>
           <li>Multiple special effects: Holo, Foil, Shimmer, Glow</li>
@@ -146,32 +137,28 @@ function FlorbDemo() {
           <li>Smooth animations and transitions</li>
         </ul>
         
-        <button
-          onClick={() => setShowUnboxing(true)}
-          style={{
-            background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%)',
-            border: 'none',
-            borderRadius: '50px',
-            padding: '1rem 2rem',
-            fontSize: '1.2rem',
-            fontWeight: 'bold',
-            color: 'white',
-            cursor: 'pointer',
-            marginTop: '2rem',
-            boxShadow: '0 8px 25px rgba(139, 92, 246, 0.4)',
-            transition: 'all 0.3s ease',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = 'translateY(-5px)';
-            e.currentTarget.style.boxShadow = '0 15px 35px rgba(139, 92, 246, 0.6)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = '0 8px 25px rgba(139, 92, 246, 0.4)';
-          }}
-        >
-          🎁 Try Florb Unboxing Experience
-        </button>
+        <div className="demo-actions">
+          <button
+            onClick={() => setCurrentView('unboxing')}
+            className="unboxing-cta-button"
+          >
+            🎁 Try Florb Unboxing Experience
+          </button>
+          
+          <button
+            onClick={() => setCurrentView('inventory')}
+            className="inventory-cta-button"
+          >
+            📦 View Florb Inventory
+          </button>
+
+          <button
+            onClick={() => setCurrentView('worldmap')}
+            className="worldmap-cta-button"
+          >
+            🌍 Explore World Map
+          </button>
+        </div>
       </div>
     </div>
   );

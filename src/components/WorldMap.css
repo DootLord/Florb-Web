@@ -1,0 +1,659 @@
+.world-map-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.resources-display {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.resource-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: white;
+  font-weight: 500;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.resource-icon {
+  font-size: 1.2rem;
+}
+
+.resource-name {
+  font-size: 0.9rem;
+}
+
+.resource-amount {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #ffd700;
+}
+
+.world-map-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.world-map-title {
+  color: white;
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.map-stats {
+  display: flex;
+  gap: 1rem;
+  color: white;
+  font-size: 0.9rem;
+}
+
+.map-stats span {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  backdrop-filter: blur(5px);
+}
+
+.back-button {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+}
+
+.back-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.map-wrapper {
+  flex: 1;
+  position: relative;
+  display: flex;
+  z-index: 1;
+}
+
+/* Sidebar Toggle Button */
+.sidebar-toggle {
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+  border: none;
+  padding: 0.75rem 1rem;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  z-index: 200;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.sidebar-toggle:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: translateY(-50%) translateX(-2px);
+}
+
+.sidebar-toggle.open {
+  right: 320px;
+  /* Adjust based on sidebar width */
+}
+
+/* Florb Sidebar */
+.florb-sidebar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 300px;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 1rem;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.florb-sidebar h3 {
+  margin: 0 0 1rem 0;
+  color: #333;
+  font-size: 1.2rem;
+  text-align: center;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding-bottom: 0.5rem;
+}
+
+.florb-inventory {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.florb-inventory-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  cursor: grab;
+  transition: all 0.3s ease;
+  background: #f9f9f9;
+}
+
+.florb-inventory-item:hover {
+  border-color: #667eea;
+  background: #f0f8ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+.florb-inventory-item:active {
+  cursor: grabbing;
+}
+
+.florb-inventory-info {
+  margin-left: 0.75rem;
+  flex: 1;
+}
+
+.florb-inventory-info h4 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1rem;
+  color: #333;
+}
+
+.florb-inventory-info p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+/* Sidebar Loading and Error States */
+.sidebar-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+}
+
+.sidebar-loading .loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+.sidebar-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  color: #d32f2f;
+}
+
+.sidebar-error .error-details {
+  font-size: 0.8rem;
+  color: #666;
+  margin: 0.5rem 0 1rem 0;
+}
+
+.sidebar-error .retry-button {
+  background: #f44336;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.sidebar-error .retry-button:hover {
+  background: #d32f2f;
+  transform: translateY(-2px);
+}
+
+.no-florbs {
+  text-align: center;
+  color: #666;
+  padding: 2rem;
+  font-style: italic;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.leaflet-map {
+  height: 100%;
+  width: 100%;
+  flex: 1;
+}
+
+/* Override default Leaflet styles for better integration */
+.leaflet-container {
+  background: #1a1a1a !important;
+  z-index: 1 !important;
+}
+
+.leaflet-popup-content-wrapper {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  z-index: 1100 !important;
+}
+
+.leaflet-popup-content {
+  margin: 0;
+  padding: 0;
+}
+
+.leaflet-popup-tip {
+  background: rgba(255, 255, 255, 0.95);
+}
+
+/* Ensure Leaflet controls don't interfere */
+.leaflet-control-container {
+  z-index: 100 !important;
+}
+
+/* Florb popup styling */
+.florb-popup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  min-width: 200px;
+}
+
+.florb-info {
+  text-align: center;
+  margin-top: 0.5rem;
+  background: #2d1b69;
+  border: 4px solid #4a148c;
+  border-radius: 0;
+  padding: 1rem;
+  position: relative;
+  font-family: 'Courier New', monospace;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  box-shadow:
+    0 0 0 2px #000,
+    inset 0 0 0 2px #6a1b9a;
+}
+
+.florb-info::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  background: repeating-linear-gradient(
+    45deg,
+    #000 0px,
+    #000 2px,
+    #4a148c 2px,
+    #4a148c 4px
+  );
+  z-index: -1;
+  border-radius: 12px;
+}
+
+.florb-info h4 {
+  margin: 0 0 0.75rem 0;
+  color: #ffeb3b;
+  font-size: 0.9rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow:
+    1px 1px 0px #000,
+    -1px -1px 0px #000,
+    1px -1px 0px #000,
+    -1px 1px 0px #000;
+  background: #1a0033;
+  padding: 0.5rem;
+  border: 2px solid #ffeb3b;
+  border-radius: 0;
+  display: inline-block;
+  transform: rotate(-1deg);
+}
+
+.florb-info p {
+  margin: 0.25rem 0;
+  color: #e1bee7;
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-shadow: 1px 1px 0px #000;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0;
+  border: 1px solid #6a1b9a;
+}
+
+.gathering-stats {
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  background: #1b1b1b;
+  border: 3px solid #4a148c;
+  border-radius: 0;
+  font-size: 0.7rem;
+  position: relative;
+}
+
+.gathering-stats::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0px,
+    transparent 4px,
+    rgba(255, 255, 255, 0.1) 4px,
+    rgba(255, 255, 255, 0.1) 8px
+  );
+  pointer-events: none;
+}
+
+.gathering-stats p {
+  margin: 0.25rem 0;
+  font-size: 0.65rem;
+  color: #81c784;
+  text-shadow: 1px 1px 0px #000;
+  font-weight: bold;
+}
+
+.gathering-stats p:first-child {
+  color: #ffeb3b;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 2px solid #4a148c;
+  padding-bottom: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Resource popup styling */
+.resource-popup {
+  padding: 1rem;
+  text-align: center;
+  min-width: 150px;
+  background: #1b5e20;
+  border: 4px solid #4caf50;
+  border-radius: 0;
+  position: relative;
+  font-family: 'Courier New', monospace;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  box-shadow:
+    0 0 0 2px #000,
+    inset 0 0 0 2px #66bb6a;
+}
+
+.resource-popup::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  background: repeating-linear-gradient(
+    45deg,
+    #000 0px,
+    #000 2px,
+    #4caf50 2px,
+    #4caf50 4px
+  );
+  z-index: -1;
+}
+
+.resource-popup h4 {
+  margin: 0 0 0.5rem 0;
+  color: #81c784;
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow:
+    1px 1px 0px #000,
+    -1px -1px 0px #000,
+    1px -1px 0px #000,
+    -1px 1px 0px #000;
+  background: #0d3c0d;
+  padding: 0.5rem;
+  border: 2px solid #81c784;
+  border-radius: 0;
+  display: inline-block;
+}
+
+.resource-popup p {
+  margin: 0.25rem 0;
+  font-size: 0.7rem;
+  color: #c8e6c9;
+  text-shadow: 1px 1px 0px #000;
+  font-weight: bold;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0;
+  border: 1px solid #4caf50;
+}
+
+/* Instructions */
+.map-instructions {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  right: 1rem;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  text-align: center;
+  z-index: 100;
+}
+
+.map-instructions p {
+  margin: 0.25rem 0;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .world-map-header {
+    padding: 0.75rem 1rem;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .world-map-title {
+    font-size: 1.25rem;
+  }
+
+  .map-stats {
+    font-size: 0.8rem;
+  }
+
+  .florb-selector-modal {
+    padding: 1.5rem;
+    width: 95%;
+  }
+
+  .florb-selection-grid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .map-instructions {
+    bottom: 0.5rem;
+    left: 0.5rem;
+    right: 0.5rem;
+    padding: 0.75rem;
+  }
+}
+
+/* Custom marker icons for different resource types */
+.resource-shleep {
+  background: #4caf50;
+}
+
+.resource-mlorp {
+  background: #2196f3;
+}
+
+.resource-spoonch {
+  background: #ff9800;
+}
+
+/* Florb map markers */
+.florb-map-marker {
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  background: rgba(255, 255, 255, 0.9);
+  padding: 2px;
+}
+
+.florb-map-marker:hover {
+  border-color: rgba(255, 255, 255, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* Florb special effects for map markers */
+.florb-map-marker.florb-holo {
+  position: relative;
+}
+
+.florb-map-marker.florb-holo::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #ffeaa7, #dda0dd, #98d8c8);
+  background-size: 400% 400%;
+  animation: holo-shift 3s ease-in-out infinite;
+  z-index: -1;
+}
+
+.florb-map-marker.florb-foil {
+  position: relative;
+  overflow: hidden;
+}
+
+.florb-map-marker.florb-foil::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+  animation: foil-shine 2s linear infinite;
+  transform: rotate(45deg);
+}
+
+.florb-map-marker.florb-shimmer {
+  position: relative;
+}
+
+.florb-map-marker.florb-shimmer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 50%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  animation: shimmer-wave 2s ease-in-out infinite;
+}
+
+.florb-map-marker.florb-glow {
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.6), 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.florb-div-icon {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* Animations for Florb effects */
+@keyframes holo-shift {
+
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes foil-shine {
+  0% {
+    transform: translateX(-100%) translateY(-100%) rotate(45deg);
+  }
+
+  100% {
+    transform: translateX(100%) translateY(100%) rotate(45deg);
+  }
+}
+
+@keyframes shimmer-wave {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}

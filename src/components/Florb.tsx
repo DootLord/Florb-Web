@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import './Florb.css';
 
 export interface FlorbData {
+  _id?: string;
   florbId: string;
   name: string;
   baseImagePath: string;
@@ -9,11 +10,13 @@ export interface FlorbData {
   specialEffects: string[];
   gradientConfig: {
     colors: string[];
-    direction: 'radial' | 'linear';
+    direction: 'radial' | 'linear' | 'diagonal';
     intensity: number;
   };
   description?: string;
   tags?: string[];
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface FlorbProps {
@@ -114,9 +117,10 @@ const Florb: React.FC<FlorbProps> = ({
       style={{
         width: size,
         height: size,
+        '--florb-mask-image': `url(${baseImagePath})`,
         ...style,
         ...tiltStyle,
-      }}
+      } as React.CSSProperties & { '--florb-mask-image': string }}
       onClick={onClick}
       title={name}
     >
@@ -161,9 +165,6 @@ const Florb: React.FC<FlorbProps> = ({
       
       {/* Glow Effect */}
       {hasGlow && <div className="florb-glow-effect" />}
-      
-      {/* Border/Frame */}
-      <div className="florb-border" />
     </div>
   );
 };

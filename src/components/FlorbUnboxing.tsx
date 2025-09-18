@@ -233,8 +233,34 @@ const FlorbUnboxing: React.FC = () => {
       console.log('API Response:', responseData);
       
       // Extract the florb data from the response
-      const newFlorb = responseData.data;
-      console.log('Generated Florb:', newFlorb);
+      let newFlorb = responseData.data;
+      
+      // Transform the baseImagePath to match our component expectations
+      if (newFlorb.baseImagePath) {
+        let transformedPath = newFlorb.baseImagePath;
+        
+        // Handle different possible API path formats
+        if (transformedPath.startsWith('src/assets/florb_base/')) {
+          // Remove the src/assets/florb_base/ prefix and keep just the filename
+          transformedPath = '/' + transformedPath.replace('src/assets/florb_base/', '');
+        } else if (transformedPath.startsWith('assets/florb_base/')) {
+          // Remove the assets/florb_base/ prefix
+          transformedPath = '/' + transformedPath.replace('assets/florb_base/', '');
+        } else if (transformedPath.startsWith('florb_base/')) {
+          // Remove the florb_base/ prefix
+          transformedPath = '/' + transformedPath.replace('florb_base/', '');
+        } else if (!transformedPath.startsWith('/') && !transformedPath.startsWith('http')) {
+          // If it's just a filename, add the leading slash
+          transformedPath = '/' + transformedPath;
+        }
+        
+        newFlorb = {
+          ...newFlorb,
+          baseImagePath: transformedPath,
+        };
+      }
+      
+      console.log('Generated Florb (transformed):', newFlorb);
 
       // Wait for explosion to complete, then reveal
       await explosionPromise;

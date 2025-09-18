@@ -12,6 +12,7 @@
   padding: 2rem;
   position: relative;
   overflow: hidden;
+  width: 100%;
 }
 
 .florb-unboxing::before {
@@ -37,6 +38,7 @@
       transparent 100px
     );
   pointer-events: none;
+  width: 100%;
 }
 
 .unboxing-container {
@@ -605,7 +607,7 @@
 .florb-wrapper {
   position: relative;
   z-index: 2;
-  animation: florb-entrance 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  animation: florb-entrance 1.2s ease-out;
   display: flex;
   justify-content: center;
   align-items: center;
