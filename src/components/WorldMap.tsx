@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Circle, useMapEvents } from 'react-leaflet';
 import { LatLngTuple, Icon, DivIcon } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import './WorldMap.css';
@@ -37,6 +37,19 @@ const RARITY_CONFIGS = {
   Epic: { radius: 200, duration: 12, effectiveness: 2.5 },
   Legendary: { radius: 300, duration: 24, effectiveness: 3.0 },
 };
+
+// Helper function to get color based on rarity
+function getRarityColor(rarity: string): string {
+  const colors = {
+    Grey: '#9e9e9e',
+    Common: '#8bc34a',
+    Uncommon: '#2196f3',
+    Rare: '#9c27b0',
+    Epic: '#ff9800',
+    Legendary: '#ff5722'
+  };
+  return colors[rarity as keyof typeof colors] || '#9e9e9e';
+}
 
 // Component for handling map clicks
 function MapClickHandler({ onMapClick }: { onMapClick: (position: LatLngTuple) => void }) {
@@ -206,7 +219,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ onBack }) => {
   
   // Default center position (somewhere in the world)
   const defaultCenter: LatLngTuple = [40.7128, -74.0060]; // New York City
-  const defaultZoom = 10;
+  const defaultZoom = 13; // Increased zoom for better radius visibility
 
   const [placedFlorbs, setPlacedFlorbs] = useState<PlacedFlorb[]>([]);
   const [resourceNodes, setResourceNodes] = useState<ResourceNode[]>([]);
@@ -216,6 +229,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ onBack }) => {
   const [inventoryFlorbs, setInventoryFlorbs] = useState<FlorbData[]>([]);
   const [inventoryLoading, setInventoryLoading] = useState(true);
   const [inventoryError, setInventoryError] = useState<string | null>(null);
+  const [showRadii, setShowRadii] = useState(false);
 
   // Load data from API on mount
   useEffect(() => {
@@ -592,9 +606,18 @@ const WorldMap: React.FC<WorldMapProps> = ({ onBack }) => {
           ← Back to Demo
         </button>
         <h1 className="world-map-title">Florb World Map</h1>
-        <div className="map-stats">
-          <span>Placed Florbs: {placedFlorbs.length}</span>
-          <span>Resources: {resourceNodes.length}</span>
+        <div className="map-controls">
+          <button
+            onClick={() => setShowRadii(!showRadii)}
+            className={`radius-toggle ${showRadii ? 'active' : ''}`}
+            title={showRadii ? 'Hide Gathering Radii' : 'Show Gathering Radii'}
+          >
+            {showRadii ? '👁️' : '👁️‍🗨️'} Radius
+          </button>
+          <div className="map-stats">
+            <span>Placed Florbs: {placedFlorbs.length}</span>
+            <span>Resources: {resourceNodes.length}</span>
+          </div>
         </div>
       </div>
 
@@ -729,6 +752,22 @@ const WorldMap: React.FC<WorldMapProps> = ({ onBack }) => {
             </Marker>
           ))}
 
+          {/* Render gathering radii circles */}
+          {showRadii && placedFlorbs.map((placedFlorb) => (
+            <Circle
+              key={`radius-${placedFlorb.id}`}
+              center={placedFlorb.position}
+              radius={placedFlorb.gatheringRadius}
+              pathOptions={{
+                color: getRarityColor(placedFlorb.florbData.rarity),
+                fillColor: getRarityColor(placedFlorb.florbData.rarity),
+                fillOpacity: 0.15,
+                weight: 2,
+                dashArray: '8, 4'
+              }}
+            />
+          ))}
+
           {/* Render resource nodes */}
           {resourceNodes.map((node) => (
             <Marker 
@@ -752,6 +791,8 @@ const WorldMap: React.FC<WorldMapProps> = ({ onBack }) => {
       <div className="map-instructions">
         <p>Drag Florbs from the sidebar to the map to place them and start gathering resources!</p>
         <p>Florb rarity affects gathering radius, duration, and effectiveness.</p>
+        <p>Use the "Radius" button to toggle gathering radius visualization on the map.</p>
+        <p>Zoom in closer to see the gathering radii more clearly - they represent actual distances in meters.</p>
         <p>Resources are gathered automatically every 10 seconds from nearby nodes.</p>
         <p>Higher rarity Florbs gather more resources and last longer!</p>
       </div>
