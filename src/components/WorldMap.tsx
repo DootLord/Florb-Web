@@ -72,28 +72,28 @@ function MapDropHandler({ onMapDrop }: { onMapDrop: (position: LatLngTuple) => v
     if (!map) return;
 
     const mapContainer = map.getContainer();
-    
-    const handleDragOver = (e: Event) => {
+
+    function handleDragOver(e: Event) {
       e.preventDefault();
-    };
-    
-    const handleDrop = (e: Event) => {
+    }
+
+    function handleDrop(e: Event) {
       e.preventDefault();
       const dragEvent = e as DragEvent;
-      
+
       if (!dragEvent.dataTransfer) return;
-      
+
       // Get the point relative to the map container
       const rect = mapContainer.getBoundingClientRect();
       const x = dragEvent.clientX - rect.left;
       const y = dragEvent.clientY - rect.top;
-      
+
       // Convert to Leaflet Point and then to LatLng
       const point = new (window as any).L.Point(x, y);
       const latlng = map.containerPointToLatLng(point);
-      
+
       onMapDrop([latlng.lat, latlng.lng]);
-    };
+    }
 
     mapContainer.addEventListener('dragover', handleDragOver);
     mapContainer.addEventListener('drop', handleDrop);
@@ -216,7 +216,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ onBack }) => {
       className: `resource-${type.toLowerCase()}`
     });
   };
-  
+
   // Default center position (somewhere in the world)
   const defaultCenter: LatLngTuple = [40.7128, -74.0060]; // New York City
   const defaultZoom = 13; // Increased zoom for better radius visibility
@@ -229,7 +229,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ onBack }) => {
   const [inventoryFlorbs, setInventoryFlorbs] = useState<FlorbData[]>([]);
   const [inventoryLoading, setInventoryLoading] = useState(true);
   const [inventoryError, setInventoryError] = useState<string | null>(null);
-  const [showRadii, setShowRadii] = useState(false);
+  const [showRadii, setShowRadii] = useState(true);
 
   // Load data from API on mount
   useEffect(() => {
@@ -279,15 +279,15 @@ const WorldMap: React.FC<WorldMapProps> = ({ onBack }) => {
       try {
         setInventoryLoading(true);
         setInventoryError(null);
-        
+
         const response = await fetch('/api/florbs');
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        
+
         const data = await response.json();
         console.log('Fetched Florbs for WorldMap:', data);
-        
+
         // Extract florbs from the nested data structure (same logic as FlorbInventory)
         let florbsArray = [];
         if (Array.isArray(data)) {
@@ -297,12 +297,12 @@ const WorldMap: React.FC<WorldMapProps> = ({ onBack }) => {
         } else if (Array.isArray(data.florbs)) {
           florbsArray = data.florbs;
         }
-        
+
         // Transform the florb data to match our component expectations
         const transformedFlorbs = florbsArray.map((florb: any) => {
           // Convert API path format to public path format
           let transformedPath = florb.baseImagePath;
-          
+
           // Handle different possible API path formats
           if (transformedPath.startsWith('src/assets/florb_base/')) {
             // Remove the src/assets/florb_base/ prefix and keep just the filename
@@ -317,15 +317,15 @@ const WorldMap: React.FC<WorldMapProps> = ({ onBack }) => {
             // If it's just a filename, add the leading slash
             transformedPath = '/' + transformedPath;
           }
-          
+
           return {
             ...florb,
             baseImagePath: transformedPath,
           };
         });
-        
+
         console.log('WorldMap extracted florbs array:', transformedFlorbs);
-        
+
         setInventoryFlorbs(transformedFlorbs);
         setInventoryLoading(false);
       } catch (error) {
@@ -440,8 +440,8 @@ const WorldMap: React.FC<WorldMapProps> = ({ onBack }) => {
     const deltaLngRad = (pos2[1] - pos1[1]) * Math.PI / 180;
 
     const a = Math.sin(deltaLatRad / 2) * Math.sin(deltaLatRad / 2) +
-              Math.cos(lat1Rad) * Math.cos(lat2Rad) *
-              Math.sin(deltaLngRad / 2) * Math.sin(deltaLngRad / 2);
+      Math.cos(lat1Rad) * Math.cos(lat2Rad) *
+      Math.sin(deltaLngRad / 2) * Math.sin(deltaLngRad / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
     return R * c;
@@ -587,8 +587,14 @@ const WorldMap: React.FC<WorldMapProps> = ({ onBack }) => {
       }
 
       const savedFlorb = await response.json();
+      // Ensure dates are properly converted to Date objects
+      const processedSavedFlorb = {
+        ...savedFlorb,
+        placedAt: new Date(savedFlorb.placedAt),
+        lastGathered: savedFlorb.lastGathered ? new Date(savedFlorb.lastGathered) : undefined,
+      };
       // Update with server response (might have different ID or additional data)
-      setPlacedFlorbs(prev => prev.map(f => f.id === newPlacedFlorb.id ? savedFlorb : f));
+      setPlacedFlorbs(prev => prev.map(f => f.id === newPlacedFlorb.id ? processedSavedFlorb : f));
     } catch (error) {
       console.error('Error placing Florb:', error);
       // Revert optimistic update
@@ -660,7 +666,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ onBack }) => {
             <div className="sidebar-error">
               <p>Failed to load Florbs</p>
               <p className="error-details">{inventoryError}</p>
-              <button 
+              <button
                 onClick={() => window.location.reload()}
                 className="retry-button"
               >
@@ -719,9 +725,9 @@ const WorldMap: React.FC<WorldMapProps> = ({ onBack }) => {
 
           {/* Render placed Florbs */}
           {placedFlorbs.map((placedFlorb) => (
-            <Marker 
-              key={placedFlorb.id} 
-              position={placedFlorb.position} 
+            <Marker
+              key={placedFlorb.id}
+              position={placedFlorb.position}
               icon={createFlorbIcon(placedFlorb.florbData)}
             >
               <Popup>
@@ -770,9 +776,9 @@ const WorldMap: React.FC<WorldMapProps> = ({ onBack }) => {
 
           {/* Render resource nodes */}
           {resourceNodes.map((node) => (
-            <Marker 
-              key={node.id} 
-              position={node.position} 
+            <Marker
+              key={node.id}
+              position={node.position}
               icon={createResourceIcon(node.type)}
             >
               <Popup>
@@ -785,16 +791,6 @@ const WorldMap: React.FC<WorldMapProps> = ({ onBack }) => {
             </Marker>
           ))}
         </MapContainer>
-      </div>
-
-      {/* Instructions */}
-      <div className="map-instructions">
-        <p>Drag Florbs from the sidebar to the map to place them and start gathering resources!</p>
-        <p>Florb rarity affects gathering radius, duration, and effectiveness.</p>
-        <p>Use the "Radius" button to toggle gathering radius visualization on the map.</p>
-        <p>Zoom in closer to see the gathering radii more clearly - they represent actual distances in meters.</p>
-        <p>Resources are gathered automatically every 10 seconds from nearby nodes.</p>
-        <p>Higher rarity Florbs gather more resources and last longer!</p>
       </div>
     </div>
   );

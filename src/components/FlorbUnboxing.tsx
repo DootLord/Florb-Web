@@ -24,14 +24,14 @@ const FlorbUnboxing: React.FC = () => {
   // Animation timeline
   const timelineRef = useRef<Timeline | null>(null);
 
-  const addToBoxFacesRef = (el: HTMLDivElement | null) => {
+  function addToBoxFacesRef(el: HTMLDivElement | null) {
     if (el && !boxFacesRef.current.includes(el)) {
       boxFacesRef.current.push(el);
     }
-  };
+  }
 
   // Idle floating animation
-  const startIdleAnimation = () => {
+  function startIdleAnimation() {
     if (!mysteryBoxRef.current) return;
 
     animate(mysteryBoxRef.current, {
@@ -43,10 +43,10 @@ const FlorbUnboxing: React.FC = () => {
       ease: 'inOut(2)',
       loop: true
     });
-  };
+  }
 
   // Stop all animations
-  const stopAllAnimations = () => {
+  function stopAllAnimations() {
     if (utils.remove && mysteryBoxRef.current) {
       utils.remove(mysteryBoxRef.current);
     }
@@ -56,10 +56,10 @@ const FlorbUnboxing: React.FC = () => {
     if (timelineRef.current) {
       timelineRef.current.pause();
     }
-  };
+  }
 
   // Explosive unboxing animation sequence
-  const startExplosionAnimation = async () => {
+  async function startExplosionAnimation() {
     console.log('Explosion animation started');
     console.log('Mystery box ref:', mysteryBoxRef.current);
     console.log('Box faces:', boxFacesRef.current);
@@ -181,7 +181,7 @@ const FlorbUnboxing: React.FC = () => {
   };
 
   // Celebration animation
-  const startCelebrationAnimation = () => {
+  function startCelebrationAnimation() {
     // Gentle confetti animation
     animate('.confetti', {
       translateY: ['-50vh', '100vh'],
@@ -204,7 +204,7 @@ const FlorbUnboxing: React.FC = () => {
     });
   };
 
-  const generateFlorb = async () => {
+  async function generateFlorb() {
     console.log('Generate Florb clicked, starting sequence...');
     setUnboxingState({
       phase: 'opening',
@@ -285,7 +285,7 @@ const FlorbUnboxing: React.FC = () => {
     }
   };
 
-  const resetUnboxing = () => {
+  function resetUnboxing() {
     stopAllAnimations();
     boxFacesRef.current = []; // Clear refs
     setUnboxingState({

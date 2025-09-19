@@ -97,7 +97,7 @@ const FlorbInventory: React.FC<FlorbInventoryProps> = ({ className = '' }) => {
   }, []);
 
   // Handle Florb selection with animation
-  const handleFlorbSelect = async (florb: FlorbData, index: number) => {
+  async function handleFlorbSelect(florb: FlorbData, index: number) {
     if (animatingOut) return;
 
     console.log('Selected Florb:', florb.name);
@@ -128,7 +128,7 @@ const FlorbInventory: React.FC<FlorbInventoryProps> = ({ className = '' }) => {
   };
 
   // Handle back to grid
-  const handleBackToGrid = () => {
+  function handleBackToGrid() {
     setState(prev => ({
       ...prev,
       mode: 'grid',

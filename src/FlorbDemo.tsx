@@ -55,9 +55,9 @@ const foilFlorbData: FlorbData = {
 function FlorbDemo() {
   const [currentView, setCurrentView] = useState<'demo' | 'unboxing' | 'inventory' | 'worldmap'>('demo');
 
-  const handleFlorbClick = (florbData: FlorbData) => {
+  function handleFlorbClick(florbData: FlorbData) {
     console.log('Florb clicked:', florbData.name);
-  };
+  }
 
   if (currentView === 'inventory') {
     return (

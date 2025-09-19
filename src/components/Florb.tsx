@@ -44,7 +44,7 @@ const Florb: React.FC<FlorbProps> = ({
   useEffect(() => {
     if (!enableTilt) return;
 
-    const handleMouseMove = (e: MouseEvent) => {
+    function handleMouseMove(e: MouseEvent) {
       if (!florbRef.current) return;
 
       const rect = florbRef.current.getBoundingClientRect();
@@ -61,14 +61,14 @@ const Florb: React.FC<FlorbProps> = ({
         transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
         transition: 'transform 0.1s ease-out',
       });
-    };
+    }
 
-    const handleMouseLeave = () => {
+    function handleMouseLeave() {
       setTiltStyle({
         transform: 'perspective(1000px) rotateX(0deg) rotateY(0deg)',
         transition: 'transform 0.3s ease-out',
       });
-    };
+    }
 
     const element = florbRef.current;
     if (element) {
@@ -85,13 +85,13 @@ const Florb: React.FC<FlorbProps> = ({
   }, [enableTilt]);
 
   // Generate gradient string based on config
-  const generateGradient = () => {
+  function generateGradient() {
     const { colors, direction } = gradientConfig;
     if (direction === 'radial') {
       return `radial-gradient(circle, ${colors.join(', ')})`;
     }
     return `linear-gradient(45deg, ${colors.join(', ')})`;
-  };
+  }
 
   // Check for special effects
   const hasHolo = specialEffects?.includes('Holo') || false;
