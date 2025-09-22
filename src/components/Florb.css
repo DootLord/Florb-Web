@@ -1,11 +1,11 @@
-/* Pixel-Perfect Florb Component Styles - Image Shape Masking */
+/* Pixel-Perfect Florb Component Styles - Dark Professional Theme */
 
 .florb {
   position: relative;
   display: inline-block;
   cursor: pointer;
   transform-style: preserve-3d;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   user-select: none;
   image-rendering: pixelated;
   /* Remove all backgrounds and borders - pure image shape */
@@ -16,8 +16,9 @@
 }
 
 .florb:hover {
-  transform: translateY(-2px) scale(1.02);
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+  transform: translateY(-3px) scale(1.03);
+  filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.4))
+          drop-shadow(0 0 12px var(--rarity-glow, rgba(0, 255, 136, 0.3)));
 }
 
 /* Base Image - This image defines the mask shape for all overlays */
@@ -56,40 +57,40 @@
   display: none;
 }
 
-/* Rarity-based styling with pixel aesthetics */
+/* Rarity-based styling with pixel aesthetics - Dark Theme Optimized */
 .florb-rarity-common {
   --rarity-color: #8d8d8d;
-  --rarity-glow: rgba(141, 141, 141, 0.4);
+  --rarity-glow: rgba(141, 141, 141, 0.6);
 }
 
 .florb-rarity-uncommon {
   --rarity-color: #00ff88;
-  --rarity-glow: rgba(0, 255, 136, 0.4);
+  --rarity-glow: rgba(0, 255, 136, 0.7);
 }
 
 .florb-rarity-rare {
   --rarity-color: #0088ff;
-  --rarity-glow: rgba(0, 136, 255, 0.4);
+  --rarity-glow: rgba(0, 136, 255, 0.7);
 }
 
 .florb-rarity-epic {
   --rarity-color: #8800ff;
-  --rarity-glow: rgba(136, 0, 255, 0.4);
+  --rarity-glow: rgba(136, 0, 255, 0.7);
 }
 
 .florb-rarity-legendary {
   --rarity-color: #ff8800;
-  --rarity-glow: rgba(255, 136, 0, 0.4);
+  --rarity-glow: rgba(255, 136, 0, 0.7);
 }
 
 .florb-rarity-mythic {
   --rarity-color: #ff0088;
-  --rarity-glow: rgba(255, 0, 136, 0.4);
+  --rarity-glow: rgba(255, 0, 136, 0.7);
 }
 
 .florb-rarity-grey {
   --rarity-color: #666666;
-  --rarity-glow: rgba(102, 102, 102, 0.4);
+  --rarity-glow: rgba(102, 102, 102, 0.6);
 }
 
 /* Pixel-Perfect Foil Effect - Masked to image shape */
@@ -178,20 +179,19 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: 
+  background:
     repeating-linear-gradient(
       45deg,
-      #ff0088 0px,
-      #ff8800 8px,
-      #ffff00 16px,
-      #88ff00 24px,
-      #00ff88 32px,
-      #0088ff 40px,
-      #8800ff 48px,
-      #ff0088 56px
+      #ff0088 0px,    /* Magenta */
+      #8800ff 8px,    /* Purple */
+      #0088ff 16px,   /* Blue */
+      #00ff88 24px,   /* Cyan */
+      #ff8800 32px,   /* Orange */
+      #ffff00 40px,   /* Yellow */
+      #ff0088 48px    /* Back to magenta */
     );
   mix-blend-mode: overlay;
-  opacity: 0.4;
+  opacity: 0.5;
   image-rendering: pixelated;
 }
 
@@ -256,10 +256,11 @@
     repeating-linear-gradient(
       90deg,
       transparent,
-      rgba(0, 255, 136, 0.3) 2px,
-      rgba(0, 136, 255, 0.3) 4px,
-      transparent 6px,
-      transparent 12px
+      rgba(0, 255, 136, 0.4) 2px,    /* Cyan */
+      rgba(136, 0, 255, 0.4) 4px,    /* Purple */
+      rgba(255, 0, 136, 0.4) 6px,    /* Magenta */
+      transparent 8px,
+      transparent 16px
     );
   image-rendering: pixelated;
 }
@@ -326,11 +327,12 @@
   }
 }
 
-/* Accessibility with pixel styling - Image-only focus */
+/* Accessibility with pixel styling - Dark Theme Optimized */
 .florb:focus {
   outline: 2px solid var(--rarity-color, #00ff88);
   outline-offset: 4px;
-  filter: drop-shadow(0 0 8px var(--rarity-glow, rgba(0, 255, 136, 0.6)));
+  filter: drop-shadow(0 0 12px var(--rarity-glow, rgba(0, 255, 136, 0.8)))
+          drop-shadow(0 4px 16px rgba(0, 0, 0, 0.5));
 }
 
 /* Print styles */

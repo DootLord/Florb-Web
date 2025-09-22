@@ -3,6 +3,8 @@ import Florb, { FlorbData } from './components/Florb';
 import FlorbUnboxing from './components/FlorbUnboxing';
 import FlorbInventory from './components/FlorbInventory';
 import WorldMap from './components/WorldMap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGift, faBox, faGlobe } from '@fortawesome/free-solid-svg-icons';
 import './FlorbDemo.css';
 
 // Sample Florb data based on your DB example
@@ -142,21 +144,21 @@ function FlorbDemo() {
             onClick={() => setCurrentView('unboxing')}
             className="unboxing-cta-button"
           >
-            🎁 Try Florb Unboxing Experience
+            <FontAwesomeIcon icon={faGift} /> Try Florb Unboxing Experience
           </button>
           
           <button
             onClick={() => setCurrentView('inventory')}
             className="inventory-cta-button"
           >
-            📦 View Florb Inventory
+            <FontAwesomeIcon icon={faBox} /> View Florb Inventory
           </button>
 
           <button
             onClick={() => setCurrentView('worldmap')}
             className="worldmap-cta-button"
           >
-            🌍 Explore World Map
+            <FontAwesomeIcon icon={faGlobe} /> Explore World Map
           </button>
         </div>
       </div>

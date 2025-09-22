@@ -1,25 +1,12 @@
-/* Pixel-Perfect Florb Inventory Styles */
+/* Pixel-Perfect Florb Inventory Styles - Dark Professional Theme */
 
 .florb-inventory {
   min-height: 100vh;
   padding: 2rem;
-  background: 
-    linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 50%, #262626 100%),
-    repeating-linear-gradient(
-      90deg,
-      transparent,
-      rgba(0, 255, 136, 0.02) 1px,
-      transparent 2px,
-      transparent 32px
-    ),
-    repeating-linear-gradient(
-      0deg,
-      transparent,
-      rgba(0, 136, 255, 0.02) 1px,
-      transparent 2px,
-      transparent 32px
-    );
-  font-family: 'Courier New', 'SF Mono', monospace;
+  background:
+    radial-gradient(ellipse at center, #0a0a0a 0%, #000000 100%),
+    linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+  font-family: 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   color: #ffffff;
   position: relative;
 }
@@ -31,13 +18,22 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: 
+  background:
+    radial-gradient(circle at 30% 70%, rgba(0, 255, 136, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 70% 30%, rgba(136, 0, 255, 0.03) 0%, transparent 50%),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.01) 1px,
+      transparent 2px,
+      transparent 20px
+    ),
     repeating-linear-gradient(
       0deg,
-      transparent 0px,
-      rgba(0, 255, 136, 0.03) 1px,
+      transparent,
+      rgba(255, 255, 255, 0.01) 1px,
       transparent 2px,
-      transparent 4px
+      transparent 20px
     );
   pointer-events: none;
   z-index: 1;
@@ -186,21 +182,21 @@
   align-items: center;
   margin-bottom: 2rem;
   padding-bottom: 1rem;
-  border-bottom: 2px solid rgba(0, 255, 136, 0.3);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   position: relative;
 }
 
 .inventory-header::after {
   content: '';
   position: absolute;
-  bottom: -2px;
+  bottom: -1px;
   left: 0;
   width: 200px;
-  height: 2px;
-  background: linear-gradient(90deg, 
-    #00ff88 0%, 
-    #0088ff 50%, 
-    transparent 100%
+  height: 1px;
+  background: linear-gradient(90deg,
+    rgba(0, 255, 136, 0.6) 0%,
+    rgba(136, 0, 255, 0.6) 50%,
+    rgba(255, 0, 136, 0.6) 100%
   );
   animation: header-scan 3s linear infinite;
 }
@@ -214,27 +210,23 @@
   font-size: 2.5rem;
   color: #ffffff;
   text-transform: uppercase;
-  letter-spacing: 3px;
-  text-shadow: 
-    2px 2px 0px #000000,
-    3px 3px 0px rgba(0, 255, 136, 0.6),
-    4px 4px 0px rgba(0, 136, 255, 0.4);
+  letter-spacing: -0.025em;
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.5);
   margin: 0;
+  font-family: 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 700;
   animation: title-glow 3s ease-in-out infinite alternate;
 }
 
 @keyframes title-glow {
   0% {
-    text-shadow: 
-      2px 2px 0px #000000,
-      3px 3px 0px rgba(0, 255, 136, 0.6),
-      4px 4px 0px rgba(0, 136, 255, 0.4);
+    text-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.5);
   }
   100% {
-    text-shadow: 
-      2px 2px 0px #000000,
-      3px 3px 0px rgba(0, 255, 136, 0.8),
-      4px 4px 0px rgba(0, 136, 255, 0.6),
+    text-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.5),
       0 0 16px rgba(255, 255, 255, 0.3);
   }
 }
@@ -246,21 +238,22 @@
 }
 
 .collection-count {
-  background: 
-    linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(40, 40, 40, 0.6) 100%);
-  border: 2px solid rgba(0, 136, 255, 0.4);
-  border-radius: 4px;
-  padding: 0.5rem 1rem;
-  color: #0088ff;
-  font-weight: bold;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%),
+    rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 0.75rem 1.25rem;
+  color: #ffffff;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  font-size: 0.85rem;
-  backdrop-filter: blur(8px);
-  box-shadow: 
-    0 4px 12px rgba(0, 0, 0, 0.4),
-    0 0 0 1px rgba(0, 136, 255, 0.2);
-  text-shadow: 1px 1px 0px #000000;
+  letter-spacing: 0.05em;
+  font-size: 0.875rem;
+  backdrop-filter: blur(20px);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.4);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  font-family: 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 /* ===== FLORB GRID ===== */
@@ -297,24 +290,17 @@
 }
 
 .florb-grid-slot {
-  background: 
-    linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(40, 40, 40, 0.6) 100%),
-    repeating-linear-gradient(
-      45deg,
-      transparent,
-      rgba(0, 255, 136, 0.02) 1px,
-      transparent 2px,
-      transparent 16px
-    );
-  border-radius: 8px;
-  border: 2px solid rgba(0, 255, 136, 0.3);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%),
+    rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   padding: 1rem;
-  backdrop-filter: blur(8px);
-  box-shadow: 
+  backdrop-filter: blur(20px);
+  box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.1),
-    0 4px 16px rgba(0, 0, 0, 0.4),
-    0 0 0 1px rgba(0, 255, 136, 0.2);
-  transition: all 0.2s ease;
+    0 8px 32px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
   display: flex;
@@ -330,11 +316,11 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, 
-    transparent 0%, 
-    #00ff88 20%, 
-    #0088ff 50%, 
-    #ff0088 80%, 
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(0, 255, 136, 0.6) 20%,
+    rgba(136, 0, 255, 0.6) 50%,
+    rgba(255, 0, 136, 0.6) 80%,
     transparent 100%
   );
   animation: slot-scan 3s linear infinite;
@@ -346,12 +332,11 @@
 }
 
 .florb-grid-item:hover .florb-grid-slot {
-  border-color: rgba(0, 255, 136, 0.5);
-  box-shadow: 
-    inset 0 1px 0 rgba(255, 255, 255, 0.2),
-    0 6px 20px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(0, 255, 136, 0.4),
-    0 0 8px rgba(0, 255, 136, 0.3);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    0 12px 40px rgba(0, 0, 0, 0.5),
+    0 0 20px rgba(0, 255, 136, 0.2);
 }
 
 .florb-grid-info {

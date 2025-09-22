@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { animate, createTimeline, Timeline, utils, stagger } from 'animejs';
 import Florb, { FlorbData } from './Florb';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGift } from '@fortawesome/free-solid-svg-icons';
 import './FlorbUnboxing.css';
 
 interface UnboxingState {
@@ -464,7 +466,7 @@ const FlorbUnboxing: React.FC = () => {
         {unboxingState.error && (
           <div className="unboxing-error">
             <div className="error-message">
-              <h3>🎁 Unboxing Failed</h3>
+              <h3><FontAwesomeIcon icon={faGift} /> Unboxing Failed</h3>
               <p>{unboxingState.error}</p>
               <button onClick={resetUnboxing} className="retry-button">
                 Try Unboxing Again

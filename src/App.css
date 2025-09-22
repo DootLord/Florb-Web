@@ -1,27 +1,13 @@
-/* Pixel-Perfect Retro Theme */
+/* Professional Dark Pixel Gaming Theme */
 #root {
-  /* max-width: 1200px; */
   margin: 0 auto;
   text-align: center;
   width: 100%;
   min-height: 100vh;
-  background: 
-    linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 50%, #262626 100%),
-    repeating-linear-gradient(
-      90deg,
-      transparent,
-      rgba(0, 255, 136, 0.02) 1px,
-      transparent 2px,
-      transparent 32px
-    ),
-    repeating-linear-gradient(
-      0deg,
-      transparent,
-      rgba(0, 136, 255, 0.02) 1px,
-      transparent 2px,
-      transparent 32px
-    );
-  font-family: 'Courier New', 'SF Mono', monospace;
+  background:
+    radial-gradient(ellipse at center, #0a0a0a 0%, #000000 100%),
+    linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+  font-family: 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   color: #ffffff;
   position: relative;
   overflow-x: hidden;
@@ -34,49 +20,64 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: 
+  background:
     repeating-linear-gradient(
       0deg,
       transparent 0px,
-      rgba(0, 255, 136, 0.03) 1px,
+      rgba(0, 255, 136, 0.01) 1px,
       transparent 2px,
-      transparent 4px
+      transparent 8px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      rgba(136, 0, 255, 0.01) 1px,
+      transparent 2px,
+      transparent 8px
     );
   pointer-events: none;
   z-index: 1;
-  animation: scan-lines 0.1s linear infinite;
+  opacity: 0.3;
 }
 
-@keyframes scan-lines {
-  0% { transform: translateY(0px); }
-  100% { transform: translateY(4px); }
+#root::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(circle at 20% 80%, rgba(0, 255, 136, 0.02) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(136, 0, 255, 0.02) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(255, 0, 136, 0.01) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
 }
 
 .logo {
-  height: 5em;
-  padding: 1rem;
+  height: 4em;
+  padding: 0.75rem;
   will-change: filter;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   image-rendering: pixelated;
-  border-radius: 4px;
-  border: 2px solid transparent;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(10px);
 }
 
 .logo:hover {
-  filter: 
-    drop-shadow(0 0 8px #00ff88aa) 
-    drop-shadow(0 0 16px #0088ffaa);
-  border-color: #00ff88;
-  background: rgba(0, 255, 136, 0.1);
-  transform: scale(1.05);
+  filter: drop-shadow(0 0 20px rgba(0, 255, 136, 0.4));
+  border-color: rgba(0, 255, 136, 0.3);
+  background: rgba(0, 255, 136, 0.05);
+  transform: translateY(-2px) scale(1.02);
 }
 
 .logo.react:hover {
-  filter: 
-    drop-shadow(0 0 8px #00ff88aa) 
-    drop-shadow(0 0 16px #61dafbaa);
-  border-color: #61dafb;
-  background: rgba(97, 218, 251, 0.1);
+  filter: drop-shadow(0 0 20px rgba(136, 0, 255, 0.4));
+  border-color: rgba(136, 0, 255, 0.3);
+  background: rgba(136, 0, 255, 0.05);
 }
 
 @keyframes logo-spin {
@@ -100,27 +101,28 @@
 }
 
 .card {
-  padding: 1.5rem;
-  background: 
-    linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(40, 40, 40, 0.6) 100%),
-    repeating-linear-gradient(
-      45deg,
-      transparent,
-      rgba(0, 255, 136, 0.02) 1px,
-      transparent 2px,
-      transparent 16px
-    );
-  border-radius: 8px;
-  border: 2px solid rgba(0, 255, 136, 0.3);
-  backdrop-filter: blur(8px);
-  box-shadow: 
-    inset 0 1px 0 rgba(255, 255, 255, 0.1),
-    0 4px 16px rgba(0, 0, 0, 0.4),
-    0 0 0 1px rgba(0, 255, 136, 0.2);
+  padding: 2rem;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%),
+    rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
   position: relative;
   overflow: hidden;
-  margin: 1rem 0;
-  animation: pixel-glow 3s ease-in-out infinite;
+  margin: 1.5rem 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card:hover {
+  border-color: rgba(0, 255, 136, 0.2);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.4),
+    0 0 20px rgba(0, 255, 136, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .card::before {
@@ -129,46 +131,35 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, 
-    transparent 0%, 
-    #00ff88 20%, 
-    #0088ff 50%, 
-    #ff0088 80%, 
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(0, 255, 136, 0.4) 20%,
+    rgba(136, 0, 255, 0.4) 50%,
+    rgba(255, 0, 136, 0.4) 80%,
     transparent 100%
   );
-  animation: pixel-scan 2s linear infinite;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
-@keyframes pixel-scan {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+.card:hover::before {
+  opacity: 1;
 }
 
 .read-the-docs {
-  color: #00ff88;
-  font-family: 'Courier New', 'SF Mono', monospace;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-size: 0.8rem;
-  text-shadow: 
-    1px 1px 0px #000000,
-    0 0 8px rgba(0, 255, 136, 0.4);
-  animation: text-glow 2s ease-in-out infinite alternate;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 0.875rem;
+  font-weight: 400;
+  letter-spacing: 0.025em;
+  text-transform: none;
+  margin-top: 1rem;
 }
 
-@keyframes text-glow {
-  0% {
-    text-shadow: 
-      1px 1px 0px #000000,
-      0 0 8px rgba(0, 255, 136, 0.4);
-  }
-  100% {
-    text-shadow: 
-      1px 1px 0px #000000,
-      0 0 12px rgba(0, 255, 136, 0.6),
-      0 0 20px rgba(0, 136, 255, 0.3);
-  }
+.read-the-docs:hover {
+  color: rgba(0, 255, 136, 0.9);
+  transition: color 0.2s ease;
 }
 
 /* App Loading State */
@@ -178,28 +169,68 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background:
+    radial-gradient(ellipse at center, #0a0a0a 0%, #000000 100%),
+    linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+  color: #ffffff;
 }
 
 .app-loading .loading-spinner {
-  width: 60px;
-  height: 60px;
-  border: 4px solid rgba(255, 255, 255, 0.3);
-  border-top: 4px solid white;
+  width: 48px;
+  height: 48px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-top: 2px solid rgba(0, 255, 136, 0.8);
   border-radius: 50%;
   animation: spin 1s linear infinite;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
 }
 
 .app-loading p {
-  font-size: 1.2rem;
+  font-size: 1.125rem;
   font-weight: 500;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  color: rgba(255, 255, 255, 0.9);
   margin: 0;
+  font-family: 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+/* Subtle Sheen Animation for Professional Polish */
+@keyframes sheen {
+  0% {
+    transform: translateX(-100%) skewX(-15deg);
+  }
+  100% {
+    transform: translateX(200%) skewX(-15deg);
+  }
+}
+
+.sheen-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.sheen-effect::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1) 45%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.1) 55%,
+    transparent
+  );
+  transform: translateX(-100%) skewX(-15deg);
+  animation: sheen 3s ease-in-out infinite;
+  animation-delay: 2s;
+  pointer-events: none;
 }

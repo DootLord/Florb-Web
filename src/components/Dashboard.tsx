@@ -3,6 +3,8 @@ import Florb, { FlorbData } from './Florb';
 import FlorbUnboxing from './FlorbUnboxing';
 import FlorbInventory from './FlorbInventory';
 import WorldMap from './WorldMap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBox, faGem, faGlobe, faCoins, faGift } from '@fortawesome/free-solid-svg-icons';
 import './Dashboard.css';
 
 interface DashboardProps {
@@ -191,32 +193,32 @@ function Dashboard({ username, onLogout }: DashboardProps) {
         <>
           {/* User Stats Overview */}
           <div className="stats-overview">
-            <div className="stat-card">
-              <div className="stat-icon">📦</div>
+            <div className="stat-card sheen-effect">
+              <div className="stat-icon"><FontAwesomeIcon icon={faBox} /></div>
               <div className="stat-content">
                 <div className="stat-number">{userStats.totalFlorbs}</div>
                 <div className="stat-label">Total Florbs</div>
               </div>
             </div>
 
-            <div className="stat-card">
-              <div className="stat-icon">💎</div>
+            <div className="stat-card sheen-effect">
+              <div className="stat-icon"><FontAwesomeIcon icon={faGem} /></div>
               <div className="stat-content">
                 <div className="stat-number">{userStats.rareFlorbs}</div>
                 <div className="stat-label">Rare Florbs</div>
               </div>
             </div>
 
-            <div className="stat-card">
-              <div className="stat-icon">🌍</div>
+            <div className="stat-card sheen-effect">
+              <div className="stat-icon"><FontAwesomeIcon icon={faGlobe} /></div>
               <div className="stat-content">
                 <div className="stat-number">{userStats.placedFlorbs}</div>
                 <div className="stat-label">Placed Florbs</div>
               </div>
             </div>
 
-            <div className="stat-card">
-              <div className="stat-icon">💰</div>
+            <div className="stat-card sheen-effect">
+              <div className="stat-icon"><FontAwesomeIcon icon={faCoins} /></div>
               <div className="stat-content">
                 <div className="stat-number">
                   {userStats.totalGathered.Shleep + userStats.totalGathered.Mlorp + userStats.totalGathered.Spoonch}
@@ -256,9 +258,9 @@ function Dashboard({ username, onLogout }: DashboardProps) {
           <div className="dashboard-actions">
             <button
               onClick={() => setCurrentView('unboxing')}
-              className="action-button unboxing-button"
+              className="action-button unboxing-button sheen-effect"
             >
-              <div className="action-icon">🎁</div>
+              <div className="action-icon"><FontAwesomeIcon icon={faGift} /></div>
               <div className="action-content">
                 <div className="action-title">Unbox Florbs</div>
                 <div className="action-description">Try your luck and collect new Florbs</div>
@@ -267,9 +269,9 @@ function Dashboard({ username, onLogout }: DashboardProps) {
 
             <button
               onClick={() => setCurrentView('inventory')}
-              className="action-button inventory-button"
+              className="action-button inventory-button sheen-effect"
             >
-              <div className="action-icon">📦</div>
+              <div className="action-icon"><FontAwesomeIcon icon={faBox} /></div>
               <div className="action-content">
                 <div className="action-title">View Collection</div>
                 <div className="action-description">Browse and manage your Florb collection</div>
@@ -278,9 +280,9 @@ function Dashboard({ username, onLogout }: DashboardProps) {
 
             <button
               onClick={() => setCurrentView('worldmap')}
-              className="action-button worldmap-button"
+              className="action-button worldmap-button sheen-effect"
             >
-              <div className="action-icon">🌍</div>
+              <div className="action-icon"><FontAwesomeIcon icon={faGlobe} /></div>
               <div className="action-content">
                 <div className="action-title">World Map</div>
                 <div className="action-description">Place your Florbs and gather resources</div>
