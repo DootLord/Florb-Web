@@ -193,7 +193,7 @@ function Dashboard({ username, onLogout }: DashboardProps) {
         <>
           {/* User Stats Overview */}
           <div className="stats-overview">
-            <div className="stat-card sheen-effect">
+            <div className="stat-card sheen-effect" style={{ '--card-index': 0 } as React.CSSProperties}>
               <div className="stat-icon"><FontAwesomeIcon icon={faBox} /></div>
               <div className="stat-content">
                 <div className="stat-number">{userStats.totalFlorbs}</div>
@@ -201,7 +201,7 @@ function Dashboard({ username, onLogout }: DashboardProps) {
               </div>
             </div>
 
-            <div className="stat-card sheen-effect">
+            <div className="stat-card sheen-effect" style={{ '--card-index': 1 } as React.CSSProperties}>
               <div className="stat-icon"><FontAwesomeIcon icon={faGem} /></div>
               <div className="stat-content">
                 <div className="stat-number">{userStats.rareFlorbs}</div>
@@ -209,7 +209,7 @@ function Dashboard({ username, onLogout }: DashboardProps) {
               </div>
             </div>
 
-            <div className="stat-card sheen-effect">
+            <div className="stat-card sheen-effect" style={{ '--card-index': 2 } as React.CSSProperties}>
               <div className="stat-icon"><FontAwesomeIcon icon={faGlobe} /></div>
               <div className="stat-content">
                 <div className="stat-number">{userStats.placedFlorbs}</div>
@@ -217,7 +217,7 @@ function Dashboard({ username, onLogout }: DashboardProps) {
               </div>
             </div>
 
-            <div className="stat-card sheen-effect">
+            <div className="stat-card sheen-effect" style={{ '--card-index': 3 } as React.CSSProperties}>
               <div className="stat-icon"><FontAwesomeIcon icon={faCoins} /></div>
               <div className="stat-content">
                 <div className="stat-number">
@@ -233,8 +233,12 @@ function Dashboard({ username, onLogout }: DashboardProps) {
             <h2>Recent Florbs</h2>
             {recentFlorbs.length > 0 ? (
               <div className="recent-florbs-grid">
-                {recentFlorbs.map((florb) => (
-                  <div key={florb.florbId} className="recent-florb-card">
+                {recentFlorbs.map((florb, index) => (
+                  <div 
+                    key={florb.florbId} 
+                    className="recent-florb-card"
+                    style={{ '--florb-index': index } as React.CSSProperties}
+                  >
                     <Florb
                       florbData={florb}
                       size={120}
@@ -259,6 +263,7 @@ function Dashboard({ username, onLogout }: DashboardProps) {
             <button
               onClick={() => setCurrentView('unboxing')}
               className="action-button unboxing-button sheen-effect"
+              style={{ '--action-index': 0 } as React.CSSProperties}
             >
               <div className="action-icon"><FontAwesomeIcon icon={faGift} /></div>
               <div className="action-content">
@@ -270,6 +275,7 @@ function Dashboard({ username, onLogout }: DashboardProps) {
             <button
               onClick={() => setCurrentView('inventory')}
               className="action-button inventory-button sheen-effect"
+              style={{ '--action-index': 1 } as React.CSSProperties}
             >
               <div className="action-icon"><FontAwesomeIcon icon={faBox} /></div>
               <div className="action-content">
@@ -281,6 +287,7 @@ function Dashboard({ username, onLogout }: DashboardProps) {
             <button
               onClick={() => setCurrentView('worldmap')}
               className="action-button worldmap-button sheen-effect"
+              style={{ '--action-index': 2 } as React.CSSProperties}
             >
               <div className="action-icon"><FontAwesomeIcon icon={faGlobe} /></div>
               <div className="action-content">

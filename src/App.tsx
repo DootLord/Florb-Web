@@ -59,6 +59,12 @@ function App() {
   if (loading) {
     return (
       <div className="app-loading">
+        {/* Data streams */}
+        <div className="data-stream">01010101 01100001 01110101 01100001</div>
+        <div className="data-stream">11001100 00110011 11110000 00001111</div>
+        <div className="data-stream">10101010 01010101 11111111 00000000</div>
+        <div className="data-stream">FLORB_DATA_STREAM_INITIATED</div>
+
         <div className="loading-spinner"></div>
         <p>Loading Florb Universe...</p>
       </div>
@@ -67,6 +73,43 @@ function App() {
 
   return (
     <div className="App">
+      {/* Cyberpunk Background Effects */}
+      <div className="cyber-grid"></div>
+      <div className="particles-container">
+        {Array.from({ length: 20 }, (_, i) => (
+          <div
+            key={i}
+            className="particle"
+            style={{
+              left: `${Math.random() * 100}%`,
+              width: `${Math.random() * 4 + 2}px`,
+              height: `${Math.random() * 4 + 2}px`,
+              animationDelay: `${Math.random() * 10}s`,
+              animationDuration: `${Math.random() * 10 + 5}s`
+            }}
+          />
+        ))}
+      </div>
+      <div className="code-rain">
+        {Array.from({ length: 10 }, (_, i) => (
+          <div
+            key={i}
+            className="code-stream"
+            style={{
+              left: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 10}s`,
+              animationDuration: `${Math.random() * 5 + 5}s`
+            }}
+          >
+            {Array.from({ length: 20 }, (_, j) => (
+              <div key={j} style={{ marginBottom: '10px' }}>
+                {Math.random() > 0.5 ? '1' : '0'}
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+
       {isAuthenticated ? (
         <Dashboard username={username} onLogout={handleLogout} />
       ) : (
