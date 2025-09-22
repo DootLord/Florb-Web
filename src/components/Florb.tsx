@@ -102,7 +102,7 @@ const Florb: React.FC<FlorbProps> = ({
   // Build class names
   const classNames = [
     'florb',
-    `florb-rarity-${rarity.toLowerCase()}`,
+    `florb-rarity-${(rarity || 'Common').toLowerCase()}`,
     hasHolo && 'florb-holo',
     hasFoil && 'florb-foil',
     hasShimmer && 'florb-shimmer',

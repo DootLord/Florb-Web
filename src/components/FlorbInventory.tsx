@@ -2,10 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import Florb, { FlorbData } from './Florb';
 import './FlorbInventory.css';
 
-interface FlorbInventoryProps {
-  className?: string;
-}
-
 interface FlorbInventoryState {
   mode: 'grid' | 'detail';
   selectedFlorb: FlorbData | null;
@@ -14,7 +10,12 @@ interface FlorbInventoryState {
   error: string | null;
 }
 
-const FlorbInventory: React.FC<FlorbInventoryProps> = ({ className = '' }) => {
+function FlorbInventory() {
+  // Helper function to get auth headers
+  const getAuthHeaders = (): Record<string, string> => {
+    const token = localStorage.getItem('userToken');
+    return token ? { 'Authorization': `Bearer ${token}` } : {};
+  };
   const [state, setState] = useState<FlorbInventoryState>({
     mode: 'grid',
     selectedFlorb: null,
@@ -32,7 +33,9 @@ const FlorbInventory: React.FC<FlorbInventoryProps> = ({ className = '' }) => {
       try {
         setState(prev => ({ ...prev, loading: true, error: null }));
         
-        const response = await fetch('/api/florbs');
+        const response = await fetch('/api/florbs', {
+          headers: getAuthHeaders()
+        });
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -139,7 +142,7 @@ const FlorbInventory: React.FC<FlorbInventoryProps> = ({ className = '' }) => {
   // Loading state
   if (state.loading) {
     return (
-      <div className={`florb-inventory ${className}`}>
+      <div className="florb-inventory">
         <div className="inventory-loading">
           <div className="loading-spinner"></div>
           <h2>Loading Florb Collection...</h2>
@@ -156,7 +159,7 @@ const FlorbInventory: React.FC<FlorbInventoryProps> = ({ className = '' }) => {
   // Error state
   if (state.error) {
     return (
-      <div className={`florb-inventory ${className}`}>
+      <div className="florb-inventory">
         <div className="inventory-error">
           <h2>Failed to Load Collection</h2>
           <p>{state.error}</p>
@@ -174,7 +177,7 @@ const FlorbInventory: React.FC<FlorbInventoryProps> = ({ className = '' }) => {
   // Detail view
   if (state.mode === 'detail' && state.selectedFlorb) {
     return (
-      <div className={`florb-inventory detail-mode ${className}`}>
+      <div className="florb-inventory detail-mode">
         <button 
           onClick={handleBackToGrid}
           className="back-to-grid-button"
@@ -195,8 +198,8 @@ const FlorbInventory: React.FC<FlorbInventoryProps> = ({ className = '' }) => {
             <h1 className="florb-detail-name">{state.selectedFlorb.name}</h1>
             
             <div className="florb-detail-rarity">
-              <span className={`rarity-badge rarity-${state.selectedFlorb.rarity.toLowerCase()}`}>
-                {state.selectedFlorb.rarity}
+              <span className={`rarity-badge rarity-${(state.selectedFlorb.rarity || 'Common').toLowerCase()}`}>
+                {state.selectedFlorb.rarity || 'Common'}
               </span>
             </div>
             
@@ -250,7 +253,7 @@ const FlorbInventory: React.FC<FlorbInventoryProps> = ({ className = '' }) => {
 
   // Grid view
   return (
-    <div className={`florb-inventory grid-mode ${className}`}>
+    <div className="florb-inventory grid-mode">
       <div className="inventory-header">
         <h1 className="inventory-title">Florb Collection</h1>
         <div className="inventory-stats">
@@ -279,8 +282,8 @@ const FlorbInventory: React.FC<FlorbInventoryProps> = ({ className = '' }) => {
               />
               <div className="florb-grid-info">
                 <span className="florb-grid-name">{florb.name}</span>
-                <span className={`florb-grid-rarity rarity-${florb.rarity.toLowerCase()}`}>
-                  {florb.rarity}
+                <span className={`florb-grid-rarity rarity-${(florb.rarity || 'Common').toLowerCase()}`}>
+                  {florb.rarity || 'Common'}
                 </span>
               </div>
             </div>

@@ -112,6 +112,11 @@ interface WorldMapProps {
 }
 
 const WorldMap: React.FC<WorldMapProps> = ({ onBack }) => {
+  // Helper function to get auth headers
+  const getAuthHeaders = (): Record<string, string> => {
+    const token = localStorage.getItem('userToken');
+    return token ? { 'Authorization': `Bearer ${token}` } : {};
+  };
   // Create Florb icon for placed Florbs with full styling
   function createFlorbIcon(florbData: FlorbData) {
     // Create a div element to hold the Florb component
@@ -236,7 +241,9 @@ const WorldMap: React.FC<WorldMapProps> = ({ onBack }) => {
     const loadInitialData = async () => {
       try {
         // Load placed Florbs
-        const florbsResponse = await fetch('/api/world-map/florbs');
+        const florbsResponse = await fetch('/api/world-map/florbs', {
+          headers: getAuthHeaders()
+        });
         if (florbsResponse.ok) {
           const florbsData = await florbsResponse.json();
           const parsedFlorbs = florbsData.map((florb: any) => ({
@@ -248,7 +255,9 @@ const WorldMap: React.FC<WorldMapProps> = ({ onBack }) => {
         }
 
         // Load resource nodes
-        const resourcesResponse = await fetch('/api/world-map/resources');
+        const resourcesResponse = await fetch('/api/world-map/resources', {
+          headers: getAuthHeaders()
+        });
         if (resourcesResponse.ok) {
           const resourcesData = await resourcesResponse.json();
           setResourceNodes(resourcesData);
@@ -258,7 +267,9 @@ const WorldMap: React.FC<WorldMapProps> = ({ onBack }) => {
         }
 
         // Load player resources
-        const playerResourcesResponse = await fetch('/api/world-map/player-resources');
+        const playerResourcesResponse = await fetch('/api/world-map/player-resources', {
+          headers: getAuthHeaders()
+        });
         if (playerResourcesResponse.ok) {
           const playerResourcesData = await playerResourcesResponse.json();
           setPlayerResources(playerResourcesData);
@@ -280,7 +291,9 @@ const WorldMap: React.FC<WorldMapProps> = ({ onBack }) => {
         setInventoryLoading(true);
         setInventoryError(null);
 
-        const response = await fetch('/api/florbs');
+        const response = await fetch('/api/florbs', {
+          headers: getAuthHeaders()
+        });
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -345,6 +358,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ onBack }) => {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          ...getAuthHeaders()
         },
         body: JSON.stringify(florbs),
       });
@@ -359,6 +373,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ onBack }) => {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          ...getAuthHeaders()
         },
         body: JSON.stringify(resources),
       });
@@ -373,6 +388,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ onBack }) => {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          ...getAuthHeaders()
         },
         body: JSON.stringify(resources),
       });
@@ -520,6 +536,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ onBack }) => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            ...getAuthHeaders()
           },
           body: JSON.stringify({
             gathered: totalGathered,
@@ -578,6 +595,7 @@ const WorldMap: React.FC<WorldMapProps> = ({ onBack }) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...getAuthHeaders()
         },
         body: JSON.stringify(newPlacedFlorb),
       });
@@ -613,35 +631,34 @@ const WorldMap: React.FC<WorldMapProps> = ({ onBack }) => {
         </button>
         <h1 className="world-map-title">Florb World Map</h1>
         <div className="map-controls">
+          <div className="resource-counters">
+            <div className="resource-item">
+              <span className="resource-icon">🟢</span>
+              <span className="resource-name">Shleep:</span>
+              <span className="resource-amount">{playerResources.Shleep}</span>
+            </div>
+            <div className="resource-item">
+              <span className="resource-icon">�</span>
+              <span className="resource-name">Mlorp:</span>
+              <span className="resource-amount">{playerResources.Mlorp}</span>
+            </div>
+            <div className="resource-item">
+              <span className="resource-icon">�</span>
+              <span className="resource-name">Spoonch:</span>
+              <span className="resource-amount">{playerResources.Spoonch}</span>
+            </div>
+          </div>
           <button
             onClick={() => setShowRadii(!showRadii)}
             className={`radius-toggle ${showRadii ? 'active' : ''}`}
             title={showRadii ? 'Hide Gathering Radii' : 'Show Gathering Radii'}
           >
-            {showRadii ? '👁️' : '👁️‍🗨️'} Radius
+            {showRadii ? '�️' : '👁️‍🗨️'} Radius
           </button>
           <div className="map-stats">
             <span>Placed Florbs: {placedFlorbs.length}</span>
             <span>Resources: {resourceNodes.length}</span>
           </div>
-        </div>
-      </div>
-
-      <div className="resources-display">
-        <div className="resource-item">
-          <span className="resource-icon">🟢</span>
-          <span className="resource-name">Shleep:</span>
-          <span className="resource-amount">{playerResources.Shleep}</span>
-        </div>
-        <div className="resource-item">
-          <span className="resource-icon">🔵</span>
-          <span className="resource-name">Mlorp:</span>
-          <span className="resource-amount">{playerResources.Mlorp}</span>
-        </div>
-        <div className="resource-item">
-          <span className="resource-icon">🟠</span>
-          <span className="resource-name">Spoonch:</span>
-          <span className="resource-amount">{playerResources.Spoonch}</span>
         </div>
       </div>
 

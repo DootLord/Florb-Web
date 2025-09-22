@@ -10,6 +10,11 @@ interface UnboxingState {
 }
 
 const FlorbUnboxing: React.FC = () => {
+  // Helper function to get auth headers
+  const getAuthHeaders = (): Record<string, string> => {
+    const token = localStorage.getItem('userToken');
+    return token ? { 'Authorization': `Bearer ${token}` } : {};
+  };
   const [unboxingState, setUnboxingState] = useState<UnboxingState>({
     phase: 'idle',
     florb: null,
@@ -222,6 +227,7 @@ const FlorbUnboxing: React.FC = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...getAuthHeaders(),
         },
       });
 
@@ -262,6 +268,21 @@ const FlorbUnboxing: React.FC = () => {
       
       console.log('Generated Florb (transformed):', newFlorb);
 
+      // Validate that we have the required florb data
+      if (!newFlorb || !newFlorb.name || !newFlorb.florbId) {
+        throw new Error('Florb generation failed - the magical energies couldn\'t create a proper Florb. Please try again!');
+      }
+
+      // Ensure rarity has a default value if not provided
+      if (!newFlorb.rarity) {
+        newFlorb.rarity = 'Common';
+      }
+
+      // Ensure specialEffects is an array
+      if (!newFlorb.specialEffects) {
+        newFlorb.specialEffects = [];
+      }
+
       // Wait for explosion to complete, then reveal
       await explosionPromise;
 
@@ -277,10 +298,25 @@ const FlorbUnboxing: React.FC = () => {
 
     } catch (error) {
       console.error('Error generating Florb:', error);
+      
+      // Provide user-friendly error messages
+      let errorMessage = 'Failed to generate Florb';
+      if (error instanceof Error) {
+        if (error.message.includes('Florb generation failed')) {
+          errorMessage = error.message; // Use our custom message
+        } else if (error.message.includes('HTTP error')) {
+          errorMessage = 'Connection issue with the Florb Universe. Please check your connection and try again!';
+        } else if (error.message.includes('Network error')) {
+          errorMessage = 'Unable to connect to the Florb Universe. Please check your internet connection!';
+        } else {
+          errorMessage = 'Something magical went wrong during unboxing. Please try again!';
+        }
+      }
+      
       setUnboxingState({
         phase: 'idle',
         florb: null,
-        error: error instanceof Error ? error.message : 'Failed to generate Florb',
+        error: errorMessage,
       });
     }
   };
@@ -396,8 +432,8 @@ const FlorbUnboxing: React.FC = () => {
 
             <div className="florb-details">
               <h2 className="florb-name">{unboxingState.florb.name}</h2>
-              <div className={`florb-rarity rarity-${unboxingState.florb.rarity.toLowerCase()}`}>
-                {unboxingState.florb.rarity}
+              <div className={`florb-rarity rarity-${(unboxingState.florb.rarity || 'Common').toLowerCase()}`}>
+                {unboxingState.florb.rarity || 'Common'}
               </div>
               <p className="florb-description">{unboxingState.florb.description}</p>
 
@@ -428,10 +464,10 @@ const FlorbUnboxing: React.FC = () => {
         {unboxingState.error && (
           <div className="unboxing-error">
             <div className="error-message">
-              <h3>Oops! Something went wrong</h3>
+              <h3>🎁 Unboxing Failed</h3>
               <p>{unboxingState.error}</p>
               <button onClick={resetUnboxing} className="retry-button">
-                Try Again
+                Try Unboxing Again
               </button>
             </div>
           </div>
