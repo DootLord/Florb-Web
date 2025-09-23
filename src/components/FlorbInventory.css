@@ -814,3 +814,28 @@
     min-height: 300px;
   }
 }
+
+/* Additional mobile optimization for very small screens */
+@media (max-width: 375px) {
+  .florb-grid {
+    grid-template-columns: 1fr; /* Single column for very small mobile screens */
+    gap: 0.5rem;
+  }
+  
+  .florb-grid-slot {
+    padding: 0.5rem;
+  }
+  
+  .florb-grid-info {
+    gap: 0.125rem;
+  }
+  
+  .florb-grid-name {
+    font-size: 0.7rem;
+  }
+  
+  .florb-grid-rarity {
+    font-size: 0.6rem;
+    padding: 0.15rem 0.4rem;
+  }
+}

@@ -680,6 +680,27 @@
   }
 }
 
+/* Additional mobile optimization for very small screens */
+@media (max-width: 375px) {
+  .stats-overview {
+    grid-template-columns: 1fr; /* Single column for very small screens */
+    gap: 0.75rem;
+  }
+  
+  .recent-florbs-grid {
+    grid-template-columns: 1fr; /* Single column for very small screens */
+    gap: 0.5rem;
+  }
+  
+  .stat-card {
+    padding: 1rem;
+  }
+  
+  .recent-florb-card {
+    padding: 0.75rem;
+  }
+}
+
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
