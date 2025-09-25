@@ -523,7 +523,7 @@ const FlorbUnboxing: React.FC = () => {
                   onMouseUp={handleMouseUp}
                   style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
                 >
-                  <div className="tab-handle">Hack</div>
+                  <div className="tab-handle">Pull</div>
                 </div>
               </div>
 
