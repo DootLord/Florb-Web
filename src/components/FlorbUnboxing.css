@@ -666,16 +666,22 @@
 .explosion-particle.particle-0 {
   background: linear-gradient(45deg, #00ffff, #0088cc);
   animation-delay: 0.1s;
+  --x: -1;
+  --y: -0.8;
 }
 
 .explosion-particle.particle-1 {
   background: linear-gradient(45deg, #ff0088, #cc0066);
   animation-delay: 0.15s;
+  --x: 1;
+  --y: -0.6;
 }
 
 .explosion-particle.particle-2 {
   background: linear-gradient(45deg, #00ff88, #00cc66);
   animation-delay: 0.2s;
+  --x: 0;
+  --y: -1;
 }
 
 @keyframes cyber-particle-breach {
