@@ -1,14 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { animate, createTimeline, Timeline, utils, stagger } from 'animejs';
+import { animate, createTimeline, Timeline } from 'animejs';
 import Florb, { FlorbData } from './Florb';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGift } from '@fortawesome/free-solid-svg-icons';
 import './FlorbUnboxing.css';
 
 interface UnboxingState {
-  phase: 'idle' | 'opening' | 'complete';
+  phase: 'idle' | 'unwrapping' | 'opening' | 'complete';
   florb: FlorbData | null;
   error: string | null;
+  unwrapProgress: number; // 0-1, how much the ribbon is pulled
 }
 
 const FlorbUnboxing: React.FC = () => {
@@ -17,174 +18,127 @@ const FlorbUnboxing: React.FC = () => {
     const token = localStorage.getItem('userToken');
     return token ? { 'Authorization': `Bearer ${token}` } : {};
   };
+
   const [unboxingState, setUnboxingState] = useState<UnboxingState>({
     phase: 'idle',
     florb: null,
     error: null,
+    unwrapProgress: 0,
   });
 
   // Refs for animation targets
-  const mysteryBoxRef = useRef<HTMLDivElement>(null);
-  const boxFacesRef = useRef<HTMLDivElement[]>([]);
+  const giftBoxRef = useRef<HTMLDivElement>(null);
+  const boxLidRef = useRef<HTMLDivElement>(null);
+  const ribbonRef = useRef<HTMLDivElement>(null);
+  const pullTabRef = useRef<HTMLDivElement>(null);
   const explosionEffectsRef = useRef<HTMLDivElement>(null);
 
   // Animation timeline
   const timelineRef = useRef<Timeline | null>(null);
 
-  function addToBoxFacesRef(el: HTMLDivElement | null) {
-    if (el && !boxFacesRef.current.includes(el)) {
-      boxFacesRef.current.push(el);
-    }
-  }
+  // Mouse interaction state
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStartY, setDragStartY] = useState(0);
+  const [currentPullDistance, setCurrentPullDistance] = useState(0);
+  const maxPullDistance = 150; // Maximum distance to pull the ribbon down
 
-  // Idle floating animation
+  // Idle floating animation for the gift box
   function startIdleAnimation() {
-    if (!mysteryBoxRef.current) return;
+    if (!giftBoxRef.current) return;
 
-    animate(mysteryBoxRef.current, {
-      rotateY: ['0deg', '360deg'],
-      rotateX: [5, 10, 5],
-      translateY: [0, -12, 0],
+    animate(giftBoxRef.current, {
+      translateY: [0, -5, 0],
       scale: [1, 1.02, 1],
-      duration: 4000,
+      duration: 3000,
       ease: 'inOut(2)',
       loop: true
     });
+
+    // Subtle ribbon shimmer
+    if (ribbonRef.current) {
+      animate(ribbonRef.current, {
+        opacity: [0.9, 1, 0.9],
+        duration: 2000,
+        ease: 'inOut(2)',
+        loop: true
+      });
+    }
   }
 
   // Stop all animations
   function stopAllAnimations() {
-    if (utils.remove && mysteryBoxRef.current) {
-      utils.remove(mysteryBoxRef.current);
-    }
-    if (utils.remove && boxFacesRef.current.length > 0) {
-      utils.remove(boxFacesRef.current);
-    }
     if (timelineRef.current) {
       timelineRef.current.pause();
     }
   }
 
-  // Explosive unboxing animation sequence
-  async function startExplosionAnimation() {
-    console.log('Explosion animation started');
-    console.log('Mystery box ref:', mysteryBoxRef.current);
-    console.log('Box faces:', boxFacesRef.current);
-    
-    if (!mysteryBoxRef.current || boxFacesRef.current.length === 0) {
-      console.error('Missing refs for explosion animation');
+  // Gift box opening animation sequence
+  async function startBoxOpeningAnimation() {
+    console.log('Box opening animation started');
+
+    if (!giftBoxRef.current) {
+      console.error('Missing refs for box opening animation');
       return Promise.resolve();
     }
 
     stopAllAnimations();
 
-    // Create a timeline for the complex sequence
+    // Create a timeline for the dramatic opening sequence
     const tl = createTimeline({
       autoplay: false
     });
 
-    // 1. Dramatic pause and focus the box
-    tl.add(mysteryBoxRef.current, {
-      rotateY: 0,
-      rotateX: 0,
-      translateY: -20,
-      scale: 1.3,
-      duration: 1000,
+    // 1. Box shakes with anticipation
+    tl.add(giftBoxRef.current, {
+      scale: [1, 1.1, 1.05],
+      rotateZ: [0, 2, -2, 1, -1, 0],
+      translateY: [0, -3, 0],
+      duration: 600,
       ease: 'out(3)'
     });
 
-    // 2. Build intense tension with violent shaking
-    tl.add(mysteryBoxRef.current, {
-      scale: [1.3, 1.4, 1.5],
-      rotateX: [0, 8, -8, 5, -5, 0],
-      rotateZ: [0, 3, -3, 2, -2, 0],
-      translateY: [-20, -25, -30],
-      filter: ['brightness(1)', 'brightness(1.8)', 'brightness(2.5)'],
-      duration: 2000,
-      ease: 'inOut(4)'
-    }, '-=300');
+    // 2. Box expands and reveals contents
+    tl.add(giftBoxRef.current, {
+      scale: [1.05, 1.2, 0],
+      opacity: [1, 0.8, 0],
+      duration: 800,
+      ease: 'out(3)'
+    }, '-=200');
 
-    // 3. Box face explosions (staggered)
-    const faceTargets = boxFacesRef.current;
-    const explosionDirections = [
-      // front face
-      { rotateY: -45, translateX: -400, translateY: -200, translateZ: 800, rotateX: 180, rotateZ: 0 },
-      // back face  
-      { rotateY: 225, translateX: 400, translateY: -150, translateZ: 800, rotateX: -180, rotateZ: 0 },
-      // left face
-      { rotateY: -135, translateX: -600, translateY: -100, translateZ: 800, rotateZ: 90, rotateX: 0 },
-      // right face
-      { rotateY: 135, translateX: 600, translateY: -80, translateZ: 800, rotateZ: -90, rotateX: 0 },
-      // top face
-      { rotateX: 135, translateY: -500, translateZ: 800, rotateY: 180, rotateZ: 0, translateX: 0 },
-      // bottom face
-      { rotateX: -135, translateY: 300, translateZ: 800, rotateY: -180, rotateZ: 0, translateX: 0 }
-    ];
-
-    explosionDirections.forEach((direction, index) => {
-      if (faceTargets[index]) {
-        tl.add(faceTargets[index], {
-          scale: [1, 1.1, 0.3],
-          opacity: [1, 1, 0],
-          rotateY: direction.rotateY,
-          rotateX: direction.rotateX,
-          rotateZ: direction.rotateZ,
-          translateX: direction.translateX,
-          translateY: direction.translateY,
-          translateZ: direction.translateZ,
-          duration: 1500,
-          ease: 'out(3)'
-        }, `-=${1400 - (index * 50)}`); // Stagger each face by 50ms
-      }
-    });
-
-    // 4. Explosion effects
+    // 3. Magical effects burst out
     if (explosionEffectsRef.current) {
-      const shockwave = explosionEffectsRef.current.querySelector('.shockwave');
-      const energyBeams = explosionEffectsRef.current.querySelectorAll('.energy-beam');
       const particles = explosionEffectsRef.current.querySelectorAll('.explosion-particle');
+      const shockwave = explosionEffectsRef.current.querySelector('.shockwave');
 
       // Shockwave
       if (shockwave) {
         tl.add(shockwave, {
-          scale: [0, 25],
+          scale: [0, 15],
           opacity: [1, 0.6, 0],
-          duration: 1500,
+          duration: 1000,
           ease: 'out(4)'
-        }, '-=1000');
+        }, '-=400');
       }
 
-      // Energy beams
-      if (energyBeams.length > 0) {
-        tl.add(energyBeams, {
-          scaleY: [0, 1, 3],
-          opacity: [0, 1, 0],
-          rotate: '360deg',
-          duration: 1200,
-          delay: stagger(100),
-          ease: 'out(3)'
-        }, '-=1200');
-      }
-
-      // Particles
+      // Particles explode outward
       if (particles.length > 0) {
         tl.add(particles, {
-          scale: [0, 1, 0],
-          translateX: () => utils.random(-300, 300),
-          translateY: () => utils.random(-300, 300),
-          rotate: () => utils.random(0, 360),
-          opacity: [0, 1, 0],
-          duration: 2000,
-          delay: stagger(50),
+          scale: [0, 1.2, 0],
+          translateX: () => Math.random() * 400 - 200,
+          translateY: () => Math.random() * 400 - 200,
+          rotate: () => Math.random() * 720,
+          opacity: [0, 1, 0.8, 0],
+          duration: () => Math.random() * 1500 + 1000,
+          delay: (_, i) => i * 50,
           ease: 'out(3)'
-        }, '-=1500');
+        }, '-=600');
       }
     }
 
     timelineRef.current = tl;
     tl.play();
 
-    return tl.then(() => { });
+    return tl.then(() => {});
   };
 
   // Celebration animation
@@ -192,13 +146,13 @@ const FlorbUnboxing: React.FC = () => {
     // Gentle confetti animation
     animate('.confetti', {
       translateY: ['-50vh', '100vh'],
-      rotate: () => utils.random(0, 360),
+      rotate: () => Math.random() * 360,
       scale: [0.8, 1, 0.6],
       opacity: [0.8, 1, 0],
       duration: 4000,
-      delay: stagger(150),
+      delay: (_, i) => i * 150,
       ease: 'in(2)',
-      loop: 3 // Only loop a few times, not infinite
+      loop: 3
     });
 
     // Subtle spotlight pulse
@@ -207,22 +161,194 @@ const FlorbUnboxing: React.FC = () => {
       opacity: [0.2, 0.4, 0.2],
       duration: 3000,
       ease: 'inOut(2)',
-      loop: 5 // Limited loops
+      loop: 5
     });
   };
 
+  // Mouse interaction handlers for ribbon pulling
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (unboxingState.phase !== 'idle') return;
+
+    setIsDragging(true);
+    setDragStartY(e.clientY);
+    setCurrentPullDistance(0);
+
+    // Prevent text selection during drag
+    e.preventDefault();
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || unboxingState.phase !== 'idle') return;
+
+    const deltaY = e.clientY - dragStartY; // Positive when pulling down
+    const newDistance = Math.max(0, Math.min(maxPullDistance, deltaY));
+    setCurrentPullDistance(newDistance);
+
+    const progress = newDistance / maxPullDistance;
+    setUnboxingState(prev => ({ ...prev, unwrapProgress: progress }));
+
+    // Update visual feedback - lift the lid and move the tab
+    if (boxLidRef.current) {
+      const lidLift = newDistance * 0.6; // Lid lifts less than tab moves
+      const lidTilt = Math.min(progress * 15, 15); // Tilt up to 15 degrees
+      boxLidRef.current.style.transform = `translateX(-50%) translateY(-${lidLift}px) rotateX(-${lidTilt}deg)`;
+      boxLidRef.current.style.transformOrigin = 'bottom center';
+    }
+
+    if (pullTabRef.current) {
+      pullTabRef.current.style.transform = `translateX(-50%) translateY(${newDistance}px)`;
+    }
+
+    // Add glow effect as we get closer to opening
+    if (giftBoxRef.current) {
+      const glowOpacity = progress * 0.5;
+      giftBoxRef.current.style.filter = `drop-shadow(0 0 ${progress * 20}px rgba(255, 255, 136, ${glowOpacity}))`;
+    }
+  };
+
+  const handleMouseUp = () => {
+    if (!isDragging) return;
+
+    setIsDragging(false);
+
+    // Check if pulled enough to trigger unboxing
+    if (currentPullDistance >= maxPullDistance * 0.7) {
+      // Success! Start the unboxing process
+      generateFlorb();
+    } else {
+      // Not enough pull, reset with smooth animation
+      setUnboxingState(prev => ({ ...prev, unwrapProgress: 0 }));
+      
+      // Smooth reset animation
+      if (boxLidRef.current) {
+        boxLidRef.current.style.transition = 'transform 0.4s ease-out';
+        boxLidRef.current.style.transform = 'translateX(-50%)';
+        setTimeout(() => {
+          if (boxLidRef.current) {
+            boxLidRef.current.style.transition = '';
+          }
+        }, 400);
+      }
+      
+      if (pullTabRef.current) {
+        pullTabRef.current.style.transition = 'transform 0.4s ease-out';
+        pullTabRef.current.style.transform = 'translateX(-50%)';
+        setTimeout(() => {
+          if (pullTabRef.current) {
+            pullTabRef.current.style.transition = '';
+          }
+        }, 400);
+      }
+
+      if (giftBoxRef.current) {
+        giftBoxRef.current.style.transition = 'filter 0.4s ease-out';
+        giftBoxRef.current.style.filter = '';
+        setTimeout(() => {
+          if (giftBoxRef.current) {
+            giftBoxRef.current.style.transition = '';
+          }
+        }, 400);
+      }
+    }
+
+    setCurrentPullDistance(0);
+  };
+
+  // Add global mouse event listeners
+  useEffect(() => {
+    if (isDragging) {
+      const handleGlobalMouseMove = (e: MouseEvent) => {
+        const deltaY = e.clientY - dragStartY;
+        const newDistance = Math.max(0, Math.min(maxPullDistance, deltaY));
+        setCurrentPullDistance(newDistance);
+
+        const progress = newDistance / maxPullDistance;
+
+        // Update lid animation
+        if (boxLidRef.current) {
+          const lidLift = newDistance * 0.6;
+          const lidTilt = Math.min(progress * 15, 15);
+          boxLidRef.current.style.transform = `translateX(-50%) translateY(-${lidLift}px) rotateX(-${lidTilt}deg)`;
+          boxLidRef.current.style.transformOrigin = 'bottom center';
+        }
+
+        if (pullTabRef.current) {
+          pullTabRef.current.style.transform = `translateX(-50%) translateY(${newDistance}px)`;
+        }
+
+        // Add progressive glow
+        if (giftBoxRef.current) {
+          const glowOpacity = progress * 0.5;
+          giftBoxRef.current.style.filter = `drop-shadow(0 0 ${progress * 20}px rgba(255, 255, 136, ${glowOpacity}))`;
+        }
+      };
+
+      const handleGlobalMouseUp = () => {
+        setIsDragging(false);
+
+        if (currentPullDistance >= maxPullDistance * 0.7) {
+          generateFlorb();
+        } else {
+          setUnboxingState(prev => ({ ...prev, unwrapProgress: 0 }));
+          
+          // Smooth reset animation
+          if (boxLidRef.current) {
+            boxLidRef.current.style.transition = 'transform 0.4s ease-out';
+            boxLidRef.current.style.transform = 'translateX(-50%)';
+            setTimeout(() => {
+              if (boxLidRef.current) {
+                boxLidRef.current.style.transition = '';
+              }
+            }, 400);
+          }
+          
+          if (pullTabRef.current) {
+            pullTabRef.current.style.transition = 'transform 0.4s ease-out';
+            pullTabRef.current.style.transform = 'translateX(-50%)';
+            setTimeout(() => {
+              if (pullTabRef.current) {
+                pullTabRef.current.style.transition = '';
+              }
+            }, 400);
+          }
+
+          if (giftBoxRef.current) {
+            giftBoxRef.current.style.transition = 'filter 0.4s ease-out';
+            giftBoxRef.current.style.filter = '';
+            setTimeout(() => {
+              if (giftBoxRef.current) {
+                giftBoxRef.current.style.transition = '';
+              }
+            }, 400);
+          }
+        }
+
+        setCurrentPullDistance(0);
+      };
+
+      document.addEventListener('mousemove', handleGlobalMouseMove);
+      document.addEventListener('mouseup', handleGlobalMouseUp);
+
+      return () => {
+        document.removeEventListener('mousemove', handleGlobalMouseMove);
+        document.removeEventListener('mouseup', handleGlobalMouseUp);
+      };
+    }
+  }, [isDragging, dragStartY, currentPullDistance, maxPullDistance]);
+
   async function generateFlorb() {
-    console.log('Generate Florb clicked, starting sequence...');
+    console.log('Ribbon pulled! Starting unboxing sequence...');
     setUnboxingState({
       phase: 'opening',
       florb: null,
       error: null,
+      unwrapProgress: 1,
     });
 
     try {
-      // Start explosion animation
-      console.log('Starting explosion animation...');
-      const explosionPromise = startExplosionAnimation();
+      // Start box opening animation
+      console.log('Starting box opening animation...');
+      const openingPromise = startBoxOpeningAnimation();
 
       // Fetch the new Florb while opening animation plays
       const response = await fetch('/api/florbs/generate', {
@@ -239,14 +365,14 @@ const FlorbUnboxing: React.FC = () => {
 
       const responseData = await response.json();
       console.log('API Response:', responseData);
-      
+
       // Extract the florb data from the response
       let newFlorb = responseData.data;
-      
+
       // Transform the baseImagePath to match our component expectations
       if (newFlorb.baseImagePath) {
         let transformedPath = newFlorb.baseImagePath;
-        
+
         // Handle different possible API path formats
         if (transformedPath.startsWith('src/assets/florb_base/')) {
           // Remove the src/assets/florb_base/ prefix and keep just the filename
@@ -261,13 +387,13 @@ const FlorbUnboxing: React.FC = () => {
           // If it's just a filename, add the leading slash
           transformedPath = '/' + transformedPath;
         }
-        
+
         newFlorb = {
           ...newFlorb,
           baseImagePath: transformedPath,
         };
       }
-      
+
       console.log('Generated Florb (transformed):', newFlorb);
 
       // Validate that we have the required florb data
@@ -285,14 +411,15 @@ const FlorbUnboxing: React.FC = () => {
         newFlorb.specialEffects = [];
       }
 
-      // Wait for explosion to complete, then reveal
-      await explosionPromise;
+      // Wait for opening to complete, then reveal
+      await openingPromise;
 
       // Skip revealing phase and go directly to complete
       setUnboxingState({
         phase: 'complete',
         florb: newFlorb,
         error: null,
+        unwrapProgress: 1,
       });
 
       // Start celebration immediately
@@ -300,7 +427,7 @@ const FlorbUnboxing: React.FC = () => {
 
     } catch (error) {
       console.error('Error generating Florb:', error);
-      
+
       // Provide user-friendly error messages
       let errorMessage = 'Failed to generate Florb';
       if (error instanceof Error) {
@@ -314,22 +441,23 @@ const FlorbUnboxing: React.FC = () => {
           errorMessage = 'Something magical went wrong during unboxing. Please try again!';
         }
       }
-      
+
       setUnboxingState({
         phase: 'idle',
         florb: null,
         error: errorMessage,
+        unwrapProgress: 0,
       });
     }
   };
 
   function resetUnboxing() {
     stopAllAnimations();
-    boxFacesRef.current = []; // Clear refs
     setUnboxingState({
       phase: 'idle',
       florb: null,
       error: null,
+      unwrapProgress: 0,
     });
   };
 
@@ -338,8 +466,7 @@ const FlorbUnboxing: React.FC = () => {
     if (unboxingState.phase === 'idle') {
       // Add a longer delay to ensure refs are set
       setTimeout(() => {
-        console.log('Starting idle animation, mysteryBoxRef:', mysteryBoxRef.current);
-        console.log('Box faces count:', boxFacesRef.current.length);
+        console.log('Starting idle animation, giftBoxRef:', giftBoxRef.current);
         startIdleAnimation();
       }, 300);
     }
@@ -356,60 +483,110 @@ const FlorbUnboxing: React.FC = () => {
     <div className="florb-unboxing">
       <div className="unboxing-container">
 
-        {/* Idle State - Show Button */}
+        {/* Idle State - Show Cyberpunk Data Container */}
         {unboxingState.phase === 'idle' && (
           <div className="unboxing-idle">
-            <div className="mystery-box" ref={mysteryBoxRef}>
-              <div className="box-face box-front" ref={addToBoxFacesRef}>
-                <div className="box-question">?</div>
+            <div className="gift-box-container">
+              <div className="gift-box" ref={giftBoxRef}>
+                {/* Cyber glow effects */}
+                <div className="cyber-glow"></div>
+                
+                {/* Main container body */}
+                <div className="box-body">
+                  <div className="box-pattern"></div>
+                  <div className="data-streams">
+                    <div className="data-stream"></div>
+                    <div className="data-stream"></div>
+                    <div className="data-stream"></div>
+                  </div>
+                  <div className="status-leds">
+                    <div className="status-led led-power"></div>
+                    <div className="status-led led-data"></div>
+                    <div className="status-led led-network"></div>
+                  </div>
+                </div>
+                
+                {/* Container lid/top panel */}
+                <div className="box-lid" ref={boxLidRef}>
+                  <div className="box-pattern"></div>
+                </div>
+                
+                {/* Access panel */}
+                <div className="access-panel"></div>
+                
+                {/* Interactive hack terminal */}
+                <div
+                  className="pull-tab"
+                  ref={pullTabRef}
+                  onMouseDown={handleMouseDown}
+                  onMouseMove={handleMouseMove}
+                  onMouseUp={handleMouseUp}
+                  style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+                >
+                  <div className="tab-handle">Hack</div>
+                </div>
               </div>
-              <div className="box-face box-back" ref={addToBoxFacesRef}></div>
-              <div className="box-face box-right" ref={addToBoxFacesRef}></div>
-              <div className="box-face box-left" ref={addToBoxFacesRef}></div>
-              <div className="box-face box-top" ref={addToBoxFacesRef}></div>
-              <div className="box-face box-bottom" ref={addToBoxFacesRef}></div>
-            </div>
 
-            <button
-              className="unbox-button"
-              onClick={generateFlorb}
-              disabled={unboxingState.phase !== 'idle'}
-            >
-              <span className="button-text">Generate New Florb</span>
-            </button>
+              {/* Floating cyber particles */}
+              <div className="cyber-particles">
+                <div className="cyber-particle"></div>
+                <div className="cyber-particle"></div>
+                <div className="cyber-particle"></div>
+                <div className="cyber-particle"></div>
+                <div className="cyber-particle"></div>
+              </div>
+
+              <div className="instruction-text">
+                <p>Florb Unboxing</p>
+              </div>
+            </div>
           </div>
         )}
 
         {/* Opening Animation */}
         {unboxingState.phase === 'opening' && (
           <div className="unboxing-opening">
-            <div className="mystery-box" ref={mysteryBoxRef}>
-              <div className="box-face box-front" ref={addToBoxFacesRef}>
-                <div className="box-question">?</div>
+            <div className="gift-box-container">
+              <div className="gift-box" ref={giftBoxRef}>
+                {/* Cyber glow effects */}
+                <div className="cyber-glow"></div>
+                
+                {/* Main container body */}
+                <div className="box-body">
+                  <div className="box-pattern"></div>
+                  <div className="data-streams">
+                    <div className="data-stream"></div>
+                    <div className="data-stream"></div>
+                    <div className="data-stream"></div>
+                  </div>
+                  <div className="status-leds">
+                    <div className="status-led led-power"></div>
+                    <div className="status-led led-data"></div>
+                    <div className="status-led led-network"></div>
+                  </div>
+                </div>
+                
+                {/* Container lid/top panel */}
+                <div className="box-lid" ref={boxLidRef}>
+                  <div className="box-pattern"></div>
+                </div>
+                
+                {/* Access panel */}
+                <div className="access-panel"></div>
               </div>
-              <div className="box-face box-back" ref={addToBoxFacesRef}></div>
-              <div className="box-face box-right" ref={addToBoxFacesRef}></div>
-              <div className="box-face box-left" ref={addToBoxFacesRef}></div>
-              <div className="box-face box-top" ref={addToBoxFacesRef}></div>
-              <div className="box-face box-bottom" ref={addToBoxFacesRef}></div>
-            </div>
 
-            <div className="explosion-effects" ref={explosionEffectsRef}>
-              <div className="shockwave"></div>
-              <div className="energy-burst">
-                {Array.from({ length: 8 }, (_, i) => (
-                  <div key={i} className={`energy-beam beam-${i}`}></div>
-                ))}
-              </div>
-              <div className="explosion-particles">
-                {Array.from({ length: 15 }, (_, i) => (
-                  <div key={i} className={`explosion-particle particle-${i}`}></div>
-                ))}
+              <div className="opening-effects" ref={explosionEffectsRef}>
+                <div className="shockwave"></div>
+                <div className="explosion-particles">
+                  {Array.from({ length: 9 }, (_, i) => (
+                    <div key={i} className={`explosion-particle particle-${i % 3}`}></div>
+                  ))}
+                </div>
               </div>
             </div>
 
             <div className="opening-text">
-              <h2>Unboxing in progress...</h2>
+              <h2>Breaching encrypted data container...</h2>
               <div className="loading-dots">
                 <span>.</span>
                 <span>.</span>
